@@ -1,0 +1,463 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Author: Fabrizio Zeni
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage[usenames,dvipsnames]{color} % Required for custom colors
+\usepackage{graphicx} % Required to insert images
+\usepackage{listings} % Required for insertion of code
+\usepackage{courier} % Required for the courier font
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+\usepackage{caption}
+
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName} % Top left header
+\chead{\hmwkClass\ : \hmwkTitle} % Top center head
+%\rhead{\firstxmark} % Top right header
+\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ of\ \protect\pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+%----------------------------------------------------------------------------------------
+%	CODE INCLUSION CONFIGURATION
+%----------------------------------------------------------------------------------------
+
+\definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0} % This is the color used for comments
+\lstloadlanguages{PHP} % Load Perl syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
+
+
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keywordstyle=\color{blue},       % keyword style
+  language=Octave,                 % the language of the code
+  morekeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  %numberstyle=\tiny\color{gray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+
+% Creates a new command to include a perl script, the first parameter is the filename of the script (without .pl), the second parameter is the caption
+\newcommand{\phpscript}[2]{
+\begin{itemize}
+\item[]\lstinputlisting[caption=#2,label=#1]{#1.php}
+\end{itemize}
+}
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT STRUCTURE COMMANDS
+%	Skip this unless you know what you're doing
+%----------------------------------------------------------------------------------------
+
+% Header and footer for when a page split occurs within a problem environment
+\newcommand{\enterProblemHeader}[1]{
+\nobreak\extramarks{#1}{#1 continued on next page\ldots}\nobreak
+\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak
+}
+
+% Header and footer for when a page split occurs between problem environments
+\newcommand{\exitProblemHeader}[1]{
+\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak
+\nobreak\extramarks{#1}{}\nobreak
+}
+
+\setcounter{secnumdepth}{0} % Removes default section numbers
+\newcounter{homeworkProblemCounter} % Creates a counter to keep track of the number of problems
+
+\newcommand{\homeworkProblemName}{}
+\newenvironment{homeworkProblem}[1]{ % Makes a new environment called homeworkProblem which takes 1 argument (custom name) but the default is "Problem #"
+%[Problem \arabic{homeworkProblemCounter}]
+%\stepcounter{homeworkProblemCounter} % Increase counter for number of problems
+\renewcommand{\homeworkProblemName}{#1} % Assign \homeworkProblemName the name of the problem
+\begin{center}
+\section{#1} % Make a section in the document with the custom problem count
+\end{center}
+\enterProblemHeader{#1} % Header and footer within the environment
+%\exitProblemHeader{\homeworkProblemName}
+}{
+\exitProblemHeader{\homeworkProblemName} % Header and footer after the environment
+}
+
+\newcommand{\problemAnswer}[1]{ % Defines the problem answer command with the content as the only argument
+\noindent\framebox[\columnwidth][c]{\begin{minipage}{0.98\columnwidth}#1\end{minipage}} % Makes the box around the problem answer and puts the content inside
+}
+
+\newcommand{\homeworkSectionName}{}
+\newenvironment{homeworkSection}[1]{ % New environment for sections within homework problems, takes 1 argument - the name of the section
+\renewcommand{\homeworkSectionName}{#1} % Assign \homeworkSectionName to the name of the section from the environment argument
+\subsection{\homeworkSectionName} % Make a subsection with the custom name of the subsection
+\enterProblemHeader{"asdasd"\ [\homeworkSectionName]}
+%\enterProblemHeader{\homeworkProblemName\ [\homeworkSectionName]} % Header and footer within the environment
+}
+%{
+%\enterProblemHeader{\homeworkProblemName} % Header and footer after the environment
+%}
+
+%----------------------------------------------------------------------------------------
+%	NAME AND CLASS SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\hmwkTitle}{Assignments\ \#7-8} % Assignment title
+\newcommand{\hmwkDueDate}{Friday,\ April\ 19,\ 2013} % Due date
+\newcommand{\hmwkClass}{Security\ Testing} % Course/class
+\newcommand{\hmwkClassTime}{13:30am} % Class/lecture time
+\newcommand{\hmwkClassInstructor}{Jones} % Teacher/lecturer
+\newcommand{\hmwkAuthorName}{Fabrizio\ Zeni} % Your name
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title{
+\vspace{2in}
+\textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+\normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate}\\
+\vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+\vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+\date{} % Insert date here if you want it to appear below your name
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+%----------------------------------------------------------------------------------------
+
+%\setcounter{tocdepth}{1} % Uncomment this line if you don't want subsections listed in the ToC
+
+\newpage
+\tableofcontents
+\newpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITIES 2,3,4,6,10,53
+%----------------------------------------------------------------------------------------
+
+% To have just one problem per page, simply put a \clearpage after each problem
+\begin{homeworkProblem}{Vulnerabilities 2,3,4,6,10,53}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.20]{/home/ashen/Scaricati/pixy/graphs/indexResults/2.jpg}
+\end{center}
+\begin{center}
+	Files: maketop.php,header.php
+	\begin{table}[h]
+	%caption{Example table}
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				schoolname & false positive \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+
+\subsection{Explanation}
+\emph{\textbf{Explanation}}
+
+\lstinputlisting[firstline=3,lastline=6]{/var/www/sm/header.php}
+
+As we can see from the query, the field that can be the source of the vulnerability is \textit{schoolname}, so we have to check if and where a injection can be made over that field.
+
+\lstinputlisting[firstline=11,lastline=11]{/var/www/sm/header.php}
+
+Inside the application we have only one \textit{UPDATE} statement, which is contained in header.php. However we can notice that the input for schoolname is sanitizied through the \textbf{htmlspecialchars()} function call. So no injection is possible and then the vulnerability can be classified as a false positive.
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITIES 11,13,16,18,19,37,41,44,63,70,71,76,85,87,88,89,90,93,111,115,126,
+%					138,141,142,146,147,148,149,161,165,180,181,183,184,191,194,200,201
+%					212,230,238,239,241,257,260,268,272,273,283,288,293,299,309,316,320
+%----------------------------------------------------------------------------------------
+\begin{homeworkProblem}{Vulnerabilities\textsuperscript{(*)}}
+%\problemAnswer{
+%\lipsum[3-5]
+%}
+\subsection{Brief Analysis}
+\begin{center}
+	\begin{table}[h]
+	%caption{Example table}
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{AFFECTED PAGES\textsuperscript{(*)}} & \textbf{RESULT} \\ \hline
+  				page & all & false positive \\ \hline
+  				page2 & all & false positive \\ \hline
+  				selectclass & 11,37,76,87,89,165,180,181,183,194,200,201,309,316 & false positive \\ \hline
+  				student & 13,142,194 & false positive \\ \hline
+  				semester & 13 & false positive \\ \hline
+  				delete & 37,41,44,76,85,111,115,149,161 & false positive \\ \hline
+  				assignment & 76 & false positive \\ \hline
+  				onpage & 146,183,257,260,268,273,283,288,293,309,320 & false positive \\ \hline
+   		 	\end{tabular}
+    	\end{center}
+    \caption*{\begin{tiny}\textsuperscript{(*)}11: AddAssignment.php | 13: AddAttendance.php |16: AddAnnouncements.php | 18: AddUser.php | 19: AddTerm.php | 37: EditAssignment.php | 41: EditAnnouncements.php | 44: EditTerms.php | 63: AddTeacher.php | 70: AddStudent.php | 71: AddSemester.php | 76: EditGrade.php | 85: EditSemester.php | 87/88: ViewClassSettings.php | 90: ViewStudents.php | 93: AddParent.php | 111: EditTeacher.php | 115: EditStudent.php | 126: ViewCourses.php | 138: StudentViewCourses.php | 141: AddClass.php | 142: ParentViewCourses.php | 146/147/148: ViewAnnoucements.php | 149: EditUser.php | 161: EditParent.php | 165: StudentMain.php | 180: TeacherMain.php | 181: ViewStudents.php | 183/184: ViewAssignments.php | 186/241: AdminMain.php | 191: DeficiencyReport.php | 194: ParentMain.php | 200/201: ViewGrades.php | 212: PointsReport.php | 130: VisualizeClasses.php | 238: VisualizeRegistration.php | 239: EditClasses.php | ManageAnnouncements.php | 260: ManageTerms.php | 268. ManageTerms.php | 272: ManageAttendance.php | 273: ManageTeachers.php | ManageUsers.php | 288: ManageParents.php | 293: ManageStudents.php | 299: Registration.php | 309: ManageAssignments.php | 316: ManageGrades.php | 320: ManageClasses.php\end{tiny}}
+   \end{table}
+\end{center}
+\subsection{Explanation}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 30,31,207
+%----------------------------------------------------------------------------------------
+\begin{homeworkProblem}{Vulnerabilities 30,31,207}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.20]{/home/ashen/Scaricati/pixy/graphs/indexResults/30.jpg}
+\end{center}
+\begin{center}
+	Files: ViewAssignmets.php,ManageAssignments.php
+	\begin{table}[h]
+	%caption{Example table}
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				coursename & positive \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{Explanation}
+\lstinputlisting[firstline=23,lastline=24]{/var/www/sm/ManageClasses.php}
+\lstinputlisting[firstline=39,lastline=40]{/var/www/sm/ManageClasses.php}
+\lstinputlisting[firstline=46,lastline=47]{/var/www/sm/ManageClasses.php}
+\lstinputlisting[firstline=73,lastline=74]{/var/www/sm/ManageClasses.php}
+
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 54
+%----------------------------------------------------------------------------------------
+\begin{homeworkProblem}{Vulnerability 54}
+\subsection{Brief Analysis}
+\begin{center}
+	File: Login.php
+	\begin{table}[h]
+	%caption{Example table}
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				text & positive \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{Explanation}
+\lstinputlisting[firstline=12,lastline=13]{/var/www/sm/Login.php}
+\lstinputlisting[firstline=11,lastline=11]{/var/www/sm/header.php}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 92
+%----------------------------------------------------------------------------------------
+\begin{homeworkProblem}{Vulnerability 92}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.15]{/home/ashen/Scaricati/pixy/graphs/indexResults/92.jpg}
+\end{center}
+\begin{center}
+	File: ManageSchoolInfo.php
+	\begin{table}[h]
+	%caption{Example table}
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & false positive \\ \hline
+  				page2 & false positive \\ \hline
+  				numperiods & positive \\ \hline
+  				numsemesters & positive \\ \hline
+  				phone & positive \\ \hline
+  				address & positive \\ \hline
+  				schoolname & false positive \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{Explanation}
+The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can also fit for \textit{page} and \textit{page2}.
+Moreover, \emph{Vulnerabilities 2,3,4,6,10,53} explains the result over \textit{schoolname}.
+\subsubsection{numperiods,numsemesters,phone,address}
+\lstinputlisting[firstline=4,lastline=22]{/var/www/sm/ManageSchoolInfo.php}
+\lstinputlisting[firstline=11,lastline=11]{/var/www/sm/header.php}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 105
+%----------------------------------------------------------------------------------------
+\begin{homeworkProblem}{Vulnerability 105}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.20]{/home/ashen/Scaricati/pixy/graphs/indexResults/105.jpg}
+\end{center}
+\begin{center}
+	File: Login.php
+	\begin{table}[h]
+	%caption{Example table}
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				message & positive \\ \hline
+  				page & false positive \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{Explanation}
+The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can also fit for \textit{page}.
+\subsubsection{message}
+\lstinputlisting[firstline=8,lastline=10]{/var/www/sm/Login.php}
+\lstinputlisting[firstline=11,lastline=11]{/var/www/sm/header.php}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 234
+%----------------------------------------------------------------------------------------
+\begin{homeworkProblem}{Vulnerability 234}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.20]{/home/ashen/Scaricati/pixy/graphs/indexResults/234.jpg}
+\end{center}
+\begin{center}
+	File: ManageSemesters.php
+	\begin{table}[h]
+	%caption{Example table}
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				term & positive \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{Explanation}
+\lstinputlisting[firstline=132,lastline=133]{/var/www/sm/ManageSemesters.php}
+\lstinputlisting[firstline=17,lastline=18]{/var/www/sm/ManageTerms.php}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 269
+%----------------------------------------------------------------------------------------
+\begin{homeworkProblem}{Vulnerability 269}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.20]{/home/ashen/Scaricati/pixy/graphs/indexResults/269.jpg}
+\end{center}
+\begin{center}
+	File: AddClass.php
+	\begin{table}[h]
+	%caption{Example table}
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & false positive \\ \hline
+  				page2 & false positive \\ \hline
+  				fullyear & false positive \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{Explanation}
+The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can also fit for \textit{page} and \textit{page2}.
+\subsubsection{fullyear}
+The parameter is just used to display a different form of insertion of the class, so no xss is possible here.
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 321
+%----------------------------------------------------------------------------------------
+\begin{homeworkProblem}{Vulnerability 321}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.25]{/home/ashen/Scaricati/pixy/graphs/indexResults/321.jpg}
+\end{center}
+\begin{center}
+	File: ReportCards.php
+	\begin{table}[h]
+	%caption{Example table}
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				data & positive \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{Explanation}
+\lstinputlisting[firstline=205,lastline=207]{/var/www/sm/ReportCards.php}
+\lstinputlisting[firstline=430,lastline=430]{/var/www/sm/ReportCards.php}
+As long as seen at \emph{Vulnerabilities 30,31,207}, \textit{coursename} can be a injected with malicious strings which can lead to an xss vulnerability. In this case the pdf generated can contain such malicious string.
+\end{homeworkProblem}
+\clearpage
+\end{document}
