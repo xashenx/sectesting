@@ -54,7 +54,7 @@
 %----------------------------------------------------------------------------------------
 
 \definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0} % This is the color used for comments
-\lstloadlanguages{PHP} % Load Perl syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
+\lstloadlanguages{PHP,Java,Sql} % Load Perl syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
 
 
 
@@ -70,16 +70,19 @@
   extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
   frame=single,                    % adds a frame around the code
   keywordstyle=\color{blue},       % keyword style
-  language=Octave,                 % the language of the code
+  language=PHP,                 % the language of the code
   morekeywords={*,...},            % if you want to add more keywords to the set
   numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
   numbersep=5pt,                   % how far the line-numbers are from the code
+  stepnumber=54,    
+  firstnumber=1,
+  numberfirstline=false
   %numberstyle=\tiny\color{gray}, % the style that is used for the line-numbers
   rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
   showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
   showstringspaces=false,          % underline spaces within strings only
   showtabs=false,                  % show tabs within strings adding particular underscores
-  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  %stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
   stringstyle=\color{mymauve},     % string literal style
   tabsize=2,                       % sets default tabsize to 2 spaces
   title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
@@ -87,9 +90,10 @@
 
 
 % Creates a new command to include a perl script, the first parameter is the filename of the script (without .pl), the second parameter is the caption
-\newcommand{\phpscript}[2]{
+\newcommand{\phpscript}[1]{
 \begin{itemize}
-\item[]\lstinputlisting[caption=#2,label=#1]{#1.php}
+%\item[]\lstinputlisting[caption=#2,label=#2,firstline=#3,lastline=#4]{#1.php}
+\item[]\lstinputlisting{/var/www/sm/#1.php}
 \end{itemize}
 }
 
@@ -211,11 +215,11 @@
 \subsection{Explanation}
 \emph{\textbf{Explanation}}
 
-\lstinputlisting[firstline=3,lastline=6]{/var/www/sm/header.php}
+\lstinputlisting[firstline=3,lastline=6,caption=header.php load of \textit{schoolname}]{/var/www/sm/header.php}
 
 As we can see from the query, the field that can be the source of the vulnerability is \textit{schoolname}, so we have to check if and where a injection can be made over that field.
 
-\lstinputlisting[firstline=11,lastline=11]{/var/www/sm/header.php}
+\lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{schoolname}]{/var/www/sm/header.php}
 
 Inside the application we have only one \textit{UPDATE} statement, which is contained in header.php. However we can notice that the input for schoolname is sanitizied through the \textbf{htmlspecialchars()} function call. So no injection is possible and then the vulnerability can be classified as a false positive.
 \end{homeworkProblem}
@@ -252,6 +256,7 @@ Inside the application we have only one \textit{UPDATE} statement, which is cont
    \end{table}
 \end{center}
 \subsection{Explanation}
+These parameters are used to process the web-application flow through. So far, it seems not possible to inject some xss through them.
 \end{homeworkProblem}
 \clearpage
 
@@ -259,29 +264,53 @@ Inside the application we have only one \textit{UPDATE} statement, which is cont
 %	VULNERABILITY 30,31,207
 %----------------------------------------------------------------------------------------
 \begin{homeworkProblem}{Vulnerabilities 30,31,207}
+
 \subsection{Brief Analysis}
 \begin{center}
 	\includegraphics[scale=0.20]{/home/ashen/Scaricati/pixy/graphs/indexResults/30.jpg}
 \end{center}
 \begin{center}
-	Files: ViewAssignmets.php,ManageAssignments.php
+	Files: ViewAssignments.php,ManageAssignments.php
 	\begin{table}[h]
 	%caption{Example table}
 		\begin{center}
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				coursename & positive \\ \hline
+  				coursename & false positive \\ \hline
+				assignment[5] & positive \\ \hline  				
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
 \subsection{Explanation}
-\lstinputlisting[firstline=23,lastline=24]{/var/www/sm/ManageClasses.php}
-\lstinputlisting[firstline=39,lastline=40]{/var/www/sm/ManageClasses.php}
-\lstinputlisting[firstline=46,lastline=47]{/var/www/sm/ManageClasses.php}
-\lstinputlisting[firstline=73,lastline=74]{/var/www/sm/ManageClasses.php}
+\subsubsection{coursename}
+In ManageClasses we have the 3 queries which do \textit{insertion} and one which do an \textit{update} inside the database table:
 
+\lstinputlisting[firstline=23,lastline=24,caption=ManageClasses.php insert1 of \textit{coursename}]{/var/www/sm/ManageClasses.php}
+\lstinputlisting[firstline=39,lastline=40,caption=ManageClasses.php insert2 of \textit{coursename}]{/var/www/sm/ManageClasses.php}
+\lstinputlisting[firstline=46,lastline=47,caption=ManageClasses.php insert3 of \textit{coursename}]{/var/www/sm/ManageClasses.php}
+\lstinputlisting[firstline=73,lastline=74,caption=ManageClasses.php update of \textit{coursename}]{/var/www/sm/ManageClasses.php}
+
+No sanitization is made over the \$\_POST[title], so an xss can be injected.
+
+In \textit{ViewAssignments.php} and \textit{ManageAssignments.php} we have the read of the tainted value: 
+\lstinputlisting[firstline=6,lastline=7,caption=ViewAssignment.php load of \textit{coursename}]{/var/www/sm/ViewAssignments.php}
+\lstinputlisting[firstline=6,lastline=7,caption=ManageAssignments.php load of \textit{coursename}]{/var/www/sm/ManageAssignments.php}
+
+So far it seems legit to say that an XSS attack can be done over this vulnerability, having a look to the forms which are the source of the insertions and updates, we can see that a limit of 20 chars is set for the field:
+\lstinputlisting[firstline=19,lastline=19,caption=AddClass.php form field]{/var/www/sm/AddClass.php}
+\lstinputlisting[firstline=25,lastline=25,caption=EditClass.php form field]{/var/www/sm/EditClass.php}
+Anyway we know that such restriction can be by-passed by intercepting the requests and modify them on-the-fly. However a closer look to the database structure denies our expectation and explains why this result is a false positive:
+\lstinputlisting[firstline=55,lastline=55,caption=Sql structure of the field]{/var/www/sm/SchoolMate.sql}
+In fact, the filed coursename\textit{•} is restricted to 20 chars even in the database structure and so any larger string is going to be truncated to that size. So no XSS can be injected because the shorter one that we know (\emph{\textit{<script>}alert('')</script>}) is \textbf{26} chars long.
+\subsubsection{assignment[5]}
+The source of this vulnerability is the value of the column \textit{assignmentinformation} of the table \textit{assignments}. The page \emph{ManageAssignments.php} can do an insertion inside that table and the value passed is not validated:
+\lstinputlisting[firstline=27,lastline=28,caption=ManageAssignments.php store of \textit{assignment[5]}]{/var/www/sm/ManageAssignments.php}
+\clearpage
+Later on, the injected value can be read from the \emph{ViewAssignments.php} page and no validation is done:
+\lstinputlisting[firstline=43,lastline=47,caption=ViewAssignments.php load query for \textit{assignment[5]}]{/var/www/sm/ViewAssignments.php}
+\lstinputlisting[firstline=59,lastline=66,caption=ViewAssignments.php variable read of \textit{assignment[5]}]{/var/www/sm/ViewAssignments.php}
 \end{homeworkProblem}
 \clearpage
 
@@ -304,8 +333,12 @@ Inside the application we have only one \textit{UPDATE} statement, which is cont
    \end{table}
 \end{center}
 \subsection{Explanation}
-\lstinputlisting[firstline=12,lastline=13]{/var/www/sm/Login.php}
-\lstinputlisting[firstline=11,lastline=11]{/var/www/sm/header.php}
+The sitetext is taken directly from the database without any validation:
+\lstinputlisting[firstline=12,lastline=13,caption=Login.php load of \textit{text}]{/var/www/sm/Login.php}
+The problem is represented by the fact that even the update of such entry is not validated:
+\lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{text}]{/var/www/sm/header.php}
+\subsection{Testing Code}
+\lstinputlisting[firstline=70,lastline=79,language=Java,caption=jwebunit test code for \textit{text}]{/home/ashen/NetBeansProjects/NumberTester/test/xss/xss.java}
 \end{homeworkProblem}
 \clearpage
 
@@ -314,9 +347,9 @@ Inside the application we have only one \textit{UPDATE} statement, which is cont
 %----------------------------------------------------------------------------------------
 \begin{homeworkProblem}{Vulnerability 92}
 \subsection{Brief Analysis}
-\begin{center}
-	\includegraphics[scale=0.15]{/home/ashen/Scaricati/pixy/graphs/indexResults/92.jpg}
-\end{center}
+%\begin{center}
+%	\includegraphics[scale=0.15]{/home/ashen/Scaricati/pixy/graphs/indexResults/92.jpg}
+%\end{center}
 \begin{center}
 	File: ManageSchoolInfo.php
 	\begin{table}[h]
@@ -327,9 +360,9 @@ Inside the application we have only one \textit{UPDATE} statement, which is cont
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
   				page & false positive \\ \hline
   				page2 & false positive \\ \hline
-  				numperiods & positive \\ \hline
-  				numsemesters & positive \\ \hline
-  				phone & positive \\ \hline
+  				numperiods & false positive \\ \hline
+  				numsemesters & false positive \\ \hline
+  				phone & false positive \\ \hline
   				address & positive \\ \hline
   				schoolname & false positive \\ \hline
     		\end{tabular}
@@ -339,15 +372,31 @@ Inside the application we have only one \textit{UPDATE} statement, which is cont
 \subsection{Explanation}
 The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can also fit for \textit{page} and \textit{page2}.
 Moreover, \emph{Vulnerabilities 2,3,4,6,10,53} explains the result over \textit{schoolname}.
-\subsubsection{numperiods,numsemesters,phone,address}
-\lstinputlisting[firstline=4,lastline=22]{/var/www/sm/ManageSchoolInfo.php}
-\lstinputlisting[firstline=11,lastline=11]{/var/www/sm/header.php}
+\subsubsection{numperiods,numsemesters}
+\lstinputlisting[firstline=14,lastline=22,caption=ManageSchoolInfo.php load of \textit{numperiods} and \textit{numsemesters}]{/var/www/sm/ManageSchoolInfo.php}
+The load of the two values is not validated and that's why the software highlight the case, moreover we have a not validated update over the table:
+\lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{numperiods}-\textit{numsemesters}-\textit{phone}-\textit{address}]{/var/www/sm/header.php}
+\clearpage
+As happened for \emph{coursename} on \textit{Vulnerabilities 30,31,207}, the database schema tell us that no injection is possile, because the interested columns are set as int(3):
+\lstinputlisting[firstline=175,lastline=190,caption=Sql schema for \textit{schoolinfo},language=Sql,label=dbsi]{/var/www/sm/SchoolMate.sql}
+\subsubsection{phone}
+\lstinputlisting[firstline=9,lastline=12,caption=ManageSchoolInfo.php load of \textit{phone}]{/var/www/sm/ManageSchoolInfo.php}
+The load works as for the two field above, and as in that case, the result can be addressed as a \emph{false positive} thanks to the database schema (\textit{Listing \ref{dbsi}}). In this case the column has type \textit{varchar(14)}, which is more sensitive than int, but the size prevent any possible injection, because, as said in \textit{Vulnerabilities 30,31,207}, the smaller xss that we can apply - even if useless - is about 26 chars long.
+\subsubsection{address}
+\lstinputlisting[firstline=4,lastline=7,caption=ManageSchoolInfo.php load of \textit{address}]{/var/www/sm/ManageSchoolInfo.php}
+This time the database schema cannot help us, because the field type is \textit{varchar(50)}, so an injection is possible. However it seems that the only page which reads from that field is the page itself - ManageSchoolInfo.php -, which puts the content as value in a form field. Still I will consider it as a positive result, because if in a future deployment the value will be displayed in an another page, the vulnerability will became exploitable.
+\clearpage
+\subsection{Testing Code}
+\subsubsection{address}
+\lstinputlisting[firstline=81,lastline=89,language=Java,caption=jwebunit test code for \textit{address}]{/home/ashen/NetBeansProjects/NumberTester/test/xss/xss.java}
 \end{homeworkProblem}
 \clearpage
 
 %----------------------------------------------------------------------------------------
 %	VULNERABILITY 105
 %----------------------------------------------------------------------------------------
+
+%% arrivato qui!! sistemare porzione di codice java!
 \begin{homeworkProblem}{Vulnerability 105}
 \subsection{Brief Analysis}
 \begin{center}
@@ -368,10 +417,10 @@ Moreover, \emph{Vulnerabilities 2,3,4,6,10,53} explains the result over \textit{
    \end{table}
 \end{center}
 \subsection{Explanation}
-The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can also fit for \textit{page}.
+The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can fit for \textit{page}.
 \subsubsection{message}
-\lstinputlisting[firstline=8,lastline=10]{/var/www/sm/Login.php}
-\lstinputlisting[firstline=11,lastline=11]{/var/www/sm/header.php}
+\lstinputlisting[firstline=8,lastline=10,caption=Login.php load of \textit{sitemessage}]{/var/www/sm/Login.php}
+\lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{sitemessage}]{/var/www/sm/header.php}
 \end{homeworkProblem}
 \clearpage
 
