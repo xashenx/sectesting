@@ -56,10 +56,8 @@
 \definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0} % This is the color used for comments
 \lstloadlanguages{PHP,Java,Sql} % Load Perl syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
 
-
-
 \lstset{ %
-  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  backgroundcolor=\color{SpringGreen},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
   basicstyle=\footnotesize,        % the size of the fonts that are used for the code
   breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
   breaklines=true,                 % sets automatic line breaking
@@ -150,7 +148,7 @@
 %	NAME AND CLASS SECTION
 %----------------------------------------------------------------------------------------
 
-\newcommand{\hmwkTitle}{Assignments\ \#7-8} % Assignment title
+\newcommand{\hmwkTitle}{Assignment\ \#7} % Assignment title
 \newcommand{\hmwkDueDate}{Friday,\ April\ 19,\ 2013} % Due date
 \newcommand{\hmwkClass}{Security\ Testing} % Course/class
 \newcommand{\hmwkClassTime}{13:30am} % Class/lecture time
@@ -242,21 +240,38 @@ Inside the application we have only one \textit{UPDATE} statement, which is cont
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{AFFECTED PAGES\textsuperscript{(*)}} & \textbf{RESULT} \\ \hline
-  				page & all & false positive \\ \hline
-  				page2 & all & false positive \\ \hline
-  				selectclass & 11,37,76,87,89,165,180,181,183,194,200,201,309,316 & false positive \\ \hline
-  				student & 13,142,194 & false positive \\ \hline
-  				semester & 13 & false positive \\ \hline
-  				delete & 37,41,44,76,85,111,115,149,161 & false positive \\ \hline
-  				assignment & 76 & false positive \\ \hline
-  				onpage & 146,183,257,260,268,273,283,288,293,309,320 & false positive \\ \hline
+  				page & all & positive \\ \hline
+  				page2 & all & positive \\ \hline
+  				selectclass & 11,37,76,87,89,165,180,181,183,194,200,201,309,316 & positive \\ \hline
+  				student & 13,142,194 & positive \\ \hline
+  				semester & 13 & positive \\ \hline
+  				delete & 37,41,44,76,85,111,115,149,161 & positive \\ \hline
+  				assignment & 76 & positive \\ \hline
+  				onpage & 146,183,257,260,268,273,283,288,293,309,320 & positive \\ \hline
    		 	\end{tabular}
     	\end{center}
     \caption*{\begin{tiny}\textsuperscript{(*)}11: AddAssignment.php | 13: AddAttendance.php |16: AddAnnouncements.php | 18: AddUser.php | 19: AddTerm.php | 37: EditAssignment.php | 41: EditAnnouncements.php | 44: EditTerms.php | 63: AddTeacher.php | 70: AddStudent.php | 71: AddSemester.php | 76: EditGrade.php | 85: EditSemester.php | 87/88: ViewClassSettings.php | 90: ViewStudents.php | 93: AddParent.php | 111: EditTeacher.php | 115: EditStudent.php | 126: ViewCourses.php | 138: StudentViewCourses.php | 141: AddClass.php | 142: ParentViewCourses.php | 146/147/148: ViewAnnoucements.php | 149: EditUser.php | 161: EditParent.php | 165: StudentMain.php | 180: TeacherMain.php | 181: ViewStudents.php | 183/184: ViewAssignments.php | 186/241: AdminMain.php | 191: DeficiencyReport.php | 194: ParentMain.php | 200/201: ViewGrades.php | 212: PointsReport.php | 130: VisualizeClasses.php | 238: VisualizeRegistration.php | 239: EditClasses.php | ManageAnnouncements.php | 260: ManageTerms.php | 268. ManageTerms.php | 272: ManageAttendance.php | 273: ManageTeachers.php | ManageUsers.php | 288: ManageParents.php | 293: ManageStudents.php | 299: Registration.php | 309: ManageAssignments.php | 316: ManageGrades.php | 320: ManageClasses.php\end{tiny}}
    \end{table}
 \end{center}
 \subsection{Explanation}
-These parameters are used to process the web-application flow through. So far, it seems not possible to inject some xss through them.
+These parameters are used to process the web-application flow through. The problem is that the page which receive these values through a POST, do not validate them and they are put inside a the \textit{value} of a \textit{input} element.
+\subsubsection{page}
+\lstinputlisting[firstline=36,lastline=36,caption=AddAssignment.php load of \textit{page}]{/var/www/sm/AddAssignment.php}
+\subsubsection{page2}
+\lstinputlisting[firstline=33,lastline=33,caption=AddAssignment.php load of \textit{page2}]{/var/www/sm/AddAssignment.php}
+\subsubsection{selectclass}
+\lstinputlisting[firstline=35,lastline=35,caption=AddAssignment.php load of \textit{selectclass}]{/var/www/sm/AddAssignment.php}
+\subsubsection{student}
+\lstinputlisting[firstline=33,lastline=33,caption=AddAttendance.php load of \textit{student}]{/var/www/sm/AddAttendance.php}
+\subsubsection{semester}
+\lstinputlisting[firstline=32,lastline=32,caption=AddAttendance.php load of \textit{student}]{/var/www/sm/AddAttendance.php}
+\subsubsection{delete}
+\lstinputlisting[firstline=2,lastline=2,caption=EditAssignment.php load of \textit{delete}]{/var/www/sm/EditAssignment.php}
+\lstinputlisting[firstline=43,lastline=43,caption=EditAssignment.php read of \textit{delete}]{/var/www/sm/EditAssignment.php}
+\subsubsection{assignment}
+\lstinputlisting[firstline=52,lastline=52,caption=EditGrade.php load of \textit{assignment}]{/var/www/sm/EditGrade.php}
+\subsubsection{onpage}
+\lstinputlisting[firstline=69,lastline=69,caption=ViewAnnouncements.php load of \textit{onpage}]{/var/www/sm/ViewAnnouncements.php}
 \end{homeworkProblem}
 \clearpage
 
@@ -338,7 +353,7 @@ The sitetext is taken directly from the database without any validation:
 The problem is represented by the fact that even the update of such entry is not validated:
 \lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{text}]{/var/www/sm/header.php}
 \subsection{Testing Code}
-\lstinputlisting[firstline=70,lastline=79,language=Java,caption=jwebunit test code for \textit{text}]{/home/ashen/NetBeansProjects/NumberTester/test/xss/xss.java}
+\lstinputlisting[firstline=18,lastline=28,language=Java,caption=jwebunit test code for \textit{text}]{/home/ashen/workspace/TestingFramework/src/test/SiteText.java}
 \end{homeworkProblem}
 \clearpage
 
@@ -388,7 +403,7 @@ This time the database schema cannot help us, because the field type is \textit{
 \clearpage
 \subsection{Testing Code}
 \subsubsection{address}
-\lstinputlisting[firstline=81,lastline=89,language=Java,caption=jwebunit test code for \textit{address}]{/home/ashen/NetBeansProjects/NumberTester/test/xss/xss.java}
+\lstinputlisting[firstline=22,lastline=32,language=Java,caption=jwebunit test code for \textit{address}]{/home/ashen/workspace/TestingFramework/src/test/Address.java}
 \end{homeworkProblem}
 \clearpage
 
@@ -411,7 +426,7 @@ This time the database schema cannot help us, because the field type is \textit{
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
   				message & positive \\ \hline
-  				page & false positive \\ \hline
+  				page & positive \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
