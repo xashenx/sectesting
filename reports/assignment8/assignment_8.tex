@@ -72,7 +72,7 @@
   morekeywords={*,...},            % if you want to add more keywords to the set
   numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
   numbersep=5pt,                   % how far the line-numbers are from the code
-  stepnumber=54,    
+  stepnumber=3,    
   firstnumber=1,
   numberfirstline=false
   %numberstyle=\tiny\color{gray}, % the style that is used for the line-numbers
@@ -148,7 +148,7 @@
 %	NAME AND CLASS SECTION
 %----------------------------------------------------------------------------------------
 
-\newcommand{\hmwkTitle}{Assignment\ \#7} % Assignment title
+\newcommand{\hmwkTitle}{Assignment\ \#8} % Assignment title
 \newcommand{\hmwkDueDate}{Friday,\ April\ 19,\ 2013} % Due date
 \newcommand{\hmwkClass}{Security\ Testing} % Course/class
 \newcommand{\hmwkClassTime}{13:30am} % Class/lecture time
@@ -187,39 +187,524 @@
 \newpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITIES 2,3,4,6,10,53
+%	VULNERABILITY 11
 %----------------------------------------------------------------------------------------
 
-% To have just one problem per page, simply put a \clearpage after each problem
-\begin{homeworkProblem}{Vulnerabilities 2,3,4,6,10,53}
+\begin{homeworkProblem}{Vulnerability 11}
 \subsection{Brief Analysis}
 \begin{center}
-	\includegraphics[scale=0.20]{/home/ashen/Scaricati/pixy/graphs/indexResults/2.jpg}
+	\includegraphics[scale=0.20]{/home/ashen/Scaricati/pixy/graphs/indexResults/11.jpg}
 \end{center}
 \begin{center}
-	Files: maketop.php,header.php
+	File: AddAssignment.php
 	\begin{table}[h]
-	%caption{Example table}
 		\begin{center}
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				schoolname & false positive \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
 
-\subsection{Explanation}
-\emph{\textbf{Explanation}}
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=16,lastline=25,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V11.java}
+\lstinputlisting[firstline=49,lastline=52,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V11.java}
+In these two functions there is nothing special, just navigation and call to the login/logout utilities.
+\subsubsection{page}
+\lstinputlisting[firstline=28,lastline=32,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V11.java}
+\lstinputlisting[firstline=7,lastline=13,language=Java,caption=function for the \textit{page} vulnerability]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
+This code does the test for \textit{page}. In order to catch the correct hidden field it was necessary to filter the form first, because there were two hidden fields with the same name and the first is not the one triggered by the buttons.
+So the function retrieves the page2 input element and stores it into the \emph{oldValue} variable, which at line 6 is concatenated to the malicious link and inserted into the page value.
+\subsubsection{page2}
+\lstinputlisting[firstline=35,lastline=39,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V11.java}
+\lstinputlisting[firstline=15,lastline=23,language=Java,caption=function for the \textit{page2} vulnerability]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
+The page2 vulnerability was more subtle to automatically trigger. That was due to the fact that the form buttons have a \textit{javascript} code in the attribute \textbf{onClick}, which write on the page2 value. So that in order to prevent the button from modify the injected value, at line 3 the button element is retrieved, then we get the value of the onClick attribute, which is processed by the \emph{page2Fix function} -  which purge the attribute from any command that modifies the page2 value and returns the value for page2 and the other instructions that need to be put back into the attribute.
+\subsubsection{selectclass}
+\lstinputlisting[firstline=42,lastline=46,language=Java,caption=jwebunit test code for \textit{selectclass}]{/home/ashen/workspace/TestingFramework/src/tests/V11.java}
+\lstinputlisting[firstline=34,lastline=39,language=Java,caption=function for the \textit{selectclass} vulnerability]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
+The selectclass vulnerability was almost straightforward and differs from the \textit{page} function just in the attribute name in the XPath expression. 
+\end{homeworkProblem}
+\clearpage
 
-\lstinputlisting[firstline=3,lastline=6,caption=header.php load of \textit{schoolname}]{/var/www/sm/header.php}
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 13
+%----------------------------------------------------------------------------------------
 
-As we can see from the query, the field that can be the source of the vulnerability is \textit{schoolname}, so we have to check if and where a injection can be made over that field.
+\begin{homeworkProblem}{Vulnerability 13}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.29]{/home/ashen/Scaricati/pixy/graphs/indexResults/13.jpg}
+\end{center}
+\begin{center}
+	File: AddAttendance.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				student & true \\ \hline
+  				semester & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=16,lastline=23,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V13.java}
+\lstinputlisting[firstline=54,lastline=57,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V13.java}
+\subsubsection{page}
+\lstinputlisting[firstline=26,lastline=30,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V13.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=33,lastline=37,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V13.java}
+\clearpage
+\subsubsection{student}
+\lstinputlisting[firstline=40,lastline=44,language=Java,caption=jwebunit test code for \textit{student}]{/home/ashen/workspace/TestingFramework/src/tests/V13.java}
+\lstinputlisting[firstline=51,lastline=57,language=Java,caption=function for vulnerabilities over select input elements]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
+In this case the input element was a \textbf{select}, so the XPATH expression was modified with \emph{//option[@selected]} to catch the selected option. The remaining part of the code is almost equivalent to the \textit{page} one.
+\subsubsection{semester}
+\lstinputlisting[firstline=47,lastline=51,language=Java,caption=jwebunit test code for \textit{semester}]{/home/ashen/workspace/TestingFramework/src/tests/V13.java}
+The semester test is a copy-paste of the student one.
+\end{homeworkProblem}
+\clearpage
 
-\lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{schoolname}]{/var/www/sm/header.php}
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 16
+%----------------------------------------------------------------------------------------
 
-Inside the application we have only one \textit{UPDATE} statement, which is contained in header.php. However we can notice that the input for schoolname is sanitizied through the \textbf{htmlspecialchars()} function call. So no injection is possible and then the vulnerability can be classified as a false positive.
+\begin{homeworkProblem}{Vulnerability 16}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.30]{/home/ashen/Scaricati/pixy/graphs/indexResults/16.jpg}
+\end{center}
+\begin{center}
+	File: AddAnnouncements.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=16,lastline=23,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V16.java}
+\lstinputlisting[firstline=40,lastline=43,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V16.java}
+\subsubsection{page}
+\lstinputlisting[firstline=26,lastline=30,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V16.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=33,lastline=37,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V16.java}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 18
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 18}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.30]{/home/ashen/Scaricati/pixy/graphs/indexResults/18.jpg}
+\end{center}
+\begin{center}
+	File: AddUser.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=16,lastline=23,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V18.java}
+\lstinputlisting[firstline=40,lastline=43,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V18.java}
+\subsubsection{page}
+\lstinputlisting[firstline=26,lastline=30,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V18.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=33,lastline=37,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V18.java}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 19
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 19}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.35]{/home/ashen/Scaricati/pixy/graphs/indexResults/19.jpg}
+\end{center}
+\begin{center}
+	File: AddTerm.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=17,lastline=24,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V19.java}
+\lstinputlisting[firstline=41,lastline=44,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V19.java}
+\subsubsection{page}
+\lstinputlisting[firstline=27,lastline=31,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V19.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=34,lastline=38,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V19.java}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 30,31
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 30,31}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.35]{/home/ashen/Scaricati/pixy/graphs/indexResults/30.jpg}
+\end{center}
+\begin{center}
+	File: ViewAssignments.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=16,lastline=23,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V30.java}
+\lstinputlisting[firstline=43,lastline=46,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V30.java}
+\subsubsection{page}
+\lstinputlisting[firstline=26,lastline=32,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V30.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=35,lastline=40,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V30.java}
+\lstinputlisting[firstline=25,lastline=32,language=Java,caption=function for the page2 vulnerability with links]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
+Here a modified version of the page2 utility function is used. That is due to the fact that in this case we have to modify a link instead of a button.
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 37
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 37}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.18]{/home/ashen/Scaricati/pixy/graphs/indexResults/37.jpg}
+\end{center}
+\begin{center}
+	File: EditAssignment.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
+  				delete & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=17,lastline=30,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V37.java}
+The prepare functions was a bit longer this time, because in order to access to the reported page one of the assignment has to be checked in the checkbox element. This is done by retrieving the line of the assignment \emph{prova} and finally we set insert in the \textit{delete[]} the value of the selected assignment.
+\lstinputlisting[firstline=61,lastline=64,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V37.java}
+\subsubsection{page}
+\lstinputlisting[firstline=33,lastline=37,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V37.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=40,lastline=44,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V37.java}
+\subsubsection{selectclass}
+\lstinputlisting[firstline=47,lastline=51,language=Java,caption=jwebunit test code for \textit{selectclass}]{/home/ashen/workspace/TestingFramework/src/tests/V37.java}
+\subsubsection{delete}
+\lstinputlisting[firstline=54,lastline=58,language=Java,caption=jwebunit test code for \textit{delete}]{/home/ashen/workspace/TestingFramework/src/tests/V37.java}
+\lstinputlisting[firstline=41,lastline=49,language=Java,caption=function for the \textit{delete} vulnerability]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
+The interesting thing of this case is that even a \emph{sql injection} is possible by putting another query after the semicolon.
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 41
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 41}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.29]{/home/ashen/Scaricati/pixy/graphs/indexResults/41.jpg}
+\end{center}
+\begin{center}
+	File: EditAnnouncement.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				delete & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=17,lastline=27,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V41.java}
+\lstinputlisting[firstline=51,lastline=54,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V41.java}
+\subsubsection{page}
+\lstinputlisting[firstline=30,lastline=34,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V41.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=37,lastline=41,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V41.java}
+\subsubsection{delete}
+\lstinputlisting[firstline=44,lastline=48,language=Java,caption=jwebunit test code for \textit{delete}]{/home/ashen/workspace/TestingFramework/src/tests/V41.java}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 44
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 44}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.29]{/home/ashen/Scaricati/pixy/graphs/indexResults/44.jpg}
+\end{center}
+\begin{center}
+	File: EditTerm.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				delete & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=17,lastline=27,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V44.java}
+\lstinputlisting[firstline=51,lastline=54,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V44.java}
+\subsubsection{page}
+\lstinputlisting[firstline=30,lastline=34,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V44.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=37,lastline=41,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V44.java}
+\subsubsection{delete}
+\lstinputlisting[firstline=44,lastline=48,language=Java,caption=jwebunit test code for \textit{delete}]{/home/ashen/workspace/TestingFramework/src/tests/V44.java}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 54
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 54}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.37]{/home/ashen/Scaricati/pixy/graphs/indexResults/54.jpg}
+\end{center}
+\begin{center}
+	File: Login.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				text & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=12,lastline=19,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V54.java}
+\lstinputlisting[firstline=31,lastline=40,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V54.java}
+\subsubsection{page}
+\lstinputlisting[firstline=22,lastline=28,language=Java,caption=jwebunit test code for \textit{text}]{/home/ashen/workspace/TestingFramework/src/tests/V54.java}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 63
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 63}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.35]{/home/ashen/Scaricati/pixy/graphs/indexResults/63.jpg}
+\end{center}
+\begin{center}
+	File: ViewAssignments.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=16,lastline=23,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V63.java}
+\lstinputlisting[firstline=40,lastline=43,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V63.java}
+\subsubsection{page}
+\lstinputlisting[firstline=26,lastline=30,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V63.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=33,lastline=37,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V63.java}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 70
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 70}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.35]{/home/ashen/Scaricati/pixy/graphs/indexResults/70.jpg}
+\end{center}
+\begin{center}
+	File: ViewAssignments.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=16,lastline=23,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V70.java}
+\lstinputlisting[firstline=40,lastline=43,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V70.java}
+\subsubsection{page}
+\lstinputlisting[firstline=26,lastline=30,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V70.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=33,lastline=37,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V70.java}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 71
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 71}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.35]{/home/ashen/Scaricati/pixy/graphs/indexResults/71.jpg}
+\end{center}
+\begin{center}
+	File: ViewAssignments.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=16,lastline=23,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V71.java}
+\lstinputlisting[firstline=40,lastline=43,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V71.java}
+\subsubsection{page}
+\lstinputlisting[firstline=26,lastline=30,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V71.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=33,lastline=37,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V71.java}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 76
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 76}
+\subsection{Brief Analysis}
+\begin{center}
+	\includegraphics[scale=0.18]{/home/ashen/Scaricati/pixy/graphs/indexResults/76.jpg}
+\end{center}
+\begin{center}
+	File: EditAnnouncement.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
+  				assignment & true \\ \hline
+  				delete & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\clearpage
+\subsection{JWebUnit test cases}
+\subsubsection{prepare and cleanup}
+\lstinputlisting[firstline=17,lastline=29,language=Java,caption=prepare function]{/home/ashen/workspace/TestingFramework/src/tests/V76.java}
+\lstinputlisting[firstline=68,lastline=71,language=Java,caption=cleanup function]{/home/ashen/workspace/TestingFramework/src/tests/V76.java}
+\subsubsection{page}
+\lstinputlisting[firstline=32,lastline=36,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V76.java}
+\subsubsection{page2}
+\lstinputlisting[firstline=39,lastline=43,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V76.java}
+\subsubsection{selectclass}
+\lstinputlisting[firstline=46,lastline=50,language=Java,caption=jwebunit test code for \textit{selectclass}]{/home/ashen/workspace/TestingFramework/src/tests/V76.java}
+\subsubsection{assignment}
+\lstinputlisting[firstline=53,lastline=57,language=Java,caption=jwebunit test code for \textit{assignment}]{/home/ashen/workspace/TestingFramework/src/tests/V76.java}
+\lstinputlisting[firstline=4,lastline=4,caption=EditGrade.php read of assignment]{/var/www/sm/EditGrade.php}
+In this case, the input element is a \textit{select}, but the posted variable is printed inside an sql query - so as already said for \emph{Vulnerability 37} - an Sql Injection is also possible.
+\subsubsection{delete}
+\lstinputlisting[firstline=60,lastline=65,language=Java,caption=jwebunit test code for \textit{delete}]{/home/ashen/workspace/TestingFramework/src/tests/V76.java}
 \end{homeworkProblem}
 \clearpage
 
@@ -240,7 +725,7 @@ Inside the application we have only one \textit{UPDATE} statement, which is cont
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{AFFECTED PAGES\textsuperscript{(*)}} & \textbf{RESULT} \\ \hline
-  				page & all & positive \\ \hline
+  				page & all & true \\ \hline
   				page2 & all & positive \\ \hline
   				selectclass & 11,37,76,87,89,165,180,181,183,194,200,201,309,316 & positive \\ \hline
   				student & 13,142,194 & positive \\ \hline
@@ -330,34 +815,6 @@ Later on, the injected value can be read from the \emph{ViewAssignments.php} pag
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 54
-%----------------------------------------------------------------------------------------
-\begin{homeworkProblem}{Vulnerability 54}
-\subsection{Brief Analysis}
-\begin{center}
-	File: Login.php
-	\begin{table}[h]
-	%caption{Example table}
-		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				text & positive \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{Explanation}
-The sitetext is taken directly from the database without any validation:
-\lstinputlisting[firstline=12,lastline=13,caption=Login.php load of \textit{text}]{/var/www/sm/Login.php}
-The problem is represented by the fact that even the update of such entry is not validated:
-\lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{text}]{/var/www/sm/header.php}
-\subsection{Testing Code}
-\lstinputlisting[firstline=18,lastline=28,language=Java,caption=jwebunit test code for \textit{text}]{/home/ashen/workspace/TestingFramework/src/test/SiteText.java}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
 %	VULNERABILITY 92
 %----------------------------------------------------------------------------------------
 \begin{homeworkProblem}{Vulnerability 92}
@@ -403,7 +860,7 @@ This time the database schema cannot help us, because the field type is \textit{
 \clearpage
 \subsection{Testing Code}
 \subsubsection{address}
-\lstinputlisting[firstline=22,lastline=32,language=Java,caption=jwebunit test code for \textit{address}]{/home/ashen/workspace/TestingFramework/src/test/Address.java}
+\lstinputlisting[firstline=22,lastline=32,language=Java,caption=jwebunit test code for \textit{address}]{/home/ashen/workspace/TestingFramework/src/tests/xss.java}
 \end{homeworkProblem}
 \clearpage
 

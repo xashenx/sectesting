@@ -254,7 +254,7 @@ Inside the application we have only one \textit{UPDATE} statement, which is cont
    \end{table}
 \end{center}
 \subsection{Explanation}
-These parameters are used to process the web-application flow through. The problem is that the page which receive these values through a POST, do not validate them and they are put inside a the \textit{value} of a \textit{input} element.
+These parameters are used to process the web-application flow through. The problem is that the page which receive these values through a POST, do not validate them and they are put inside a the \textit{value} of a \textit{input} element. So an XSS attack can be done by injecting a string inside that POST parameter. In the following subsections I will show the portion of code which is affected by the attack.
 \subsubsection{page}
 \lstinputlisting[firstline=36,lastline=36,caption=AddAssignment.php load of \textit{page}]{/var/www/sm/AddAssignment.php}
 \subsubsection{page2}
@@ -320,7 +320,7 @@ Anyway we know that such restriction can be by-passed by intercepting the reques
 \lstinputlisting[firstline=55,lastline=55,caption=Sql structure of the field]{/var/www/sm/SchoolMate.sql}
 In fact, the filed coursename\textit{•} is restricted to 20 chars even in the database structure and so any larger string is going to be truncated to that size. So no XSS can be injected because the shorter one that we know (\emph{\textit{<script>}alert('')</script>}) is \textbf{26} chars long.
 \subsubsection{assignment[5]}
-The source of this vulnerability is the value of the column \textit{assignmentinformation} of the table \textit{assignments}. The page \emph{ManageAssignments.php} can do an insertion inside that table and the value passed is not validated:
+This vulnerability was not reported bt pixy, but I want to show that it could be a potential problem. The source of this vulnerability is the value of the column \textit{assignmentinformation} of the table \textit{assignments}. The page \emph{ManageAssignments.php} can do an insertion inside that table and the value passed is not validated:
 \lstinputlisting[firstline=27,lastline=28,caption=ManageAssignments.php store of \textit{assignment[5]}]{/var/www/sm/ManageAssignments.php}
 \clearpage
 Later on, the injected value can be read from the \emph{ViewAssignments.php} page and no validation is done:
@@ -352,8 +352,6 @@ The sitetext is taken directly from the database without any validation:
 \lstinputlisting[firstline=12,lastline=13,caption=Login.php load of \textit{text}]{/var/www/sm/Login.php}
 The problem is represented by the fact that even the update of such entry is not validated:
 \lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{text}]{/var/www/sm/header.php}
-\subsection{Testing Code}
-\lstinputlisting[firstline=18,lastline=28,language=Java,caption=jwebunit test code for \textit{text}]{/home/ashen/workspace/TestingFramework/src/test/SiteText.java}
 \end{homeworkProblem}
 \clearpage
 
@@ -373,12 +371,12 @@ The problem is represented by the fact that even the update of such entry is not
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & false positive \\ \hline
-  				page2 & false positive \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
   				numperiods & false positive \\ \hline
   				numsemesters & false positive \\ \hline
   				phone & false positive \\ \hline
-  				address & positive \\ \hline
+  				address & true \\ \hline
   				schoolname & false positive \\ \hline
     		\end{tabular}
     	\end{center}
@@ -400,10 +398,6 @@ The load works as for the two field above, and as in that case, the result can b
 \subsubsection{address}
 \lstinputlisting[firstline=4,lastline=7,caption=ManageSchoolInfo.php load of \textit{address}]{/var/www/sm/ManageSchoolInfo.php}
 This time the database schema cannot help us, because the field type is \textit{varchar(50)}, so an injection is possible. However it seems that the only page which reads from that field is the page itself - ManageSchoolInfo.php -, which puts the content as value in a form field. Still I will consider it as a positive result, because if in a future deployment the value will be displayed in an another page, the vulnerability will became exploitable.
-\clearpage
-\subsection{Testing Code}
-\subsubsection{address}
-\lstinputlisting[firstline=22,lastline=32,language=Java,caption=jwebunit test code for \textit{address}]{/home/ashen/workspace/TestingFramework/src/test/Address.java}
 \end{homeworkProblem}
 \clearpage
 
@@ -411,7 +405,6 @@ This time the database schema cannot help us, because the field type is \textit{
 %	VULNERABILITY 105
 %----------------------------------------------------------------------------------------
 
-%% arrivato qui!! sistemare porzione di codice java!
 \begin{homeworkProblem}{Vulnerability 105}
 \subsection{Brief Analysis}
 \begin{center}
@@ -425,8 +418,8 @@ This time the database schema cannot help us, because the field type is \textit{
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				message & positive \\ \hline
-  				page & positive \\ \hline
+  				message & true \\ \hline
+  				page & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
@@ -455,15 +448,17 @@ The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can fit 
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				term & positive \\ \hline
+  				term & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
 \clearpage
 \subsection{Explanation}
-\lstinputlisting[firstline=132,lastline=133]{/var/www/sm/ManageSemesters.php}
-\lstinputlisting[firstline=17,lastline=18]{/var/www/sm/ManageTerms.php}
+\lstinputlisting[firstline=132,lastline=133,caption=ManageSemesters.php load of \textit{term}]{/var/www/sm/ManageSemesters.php}
+In the portion of code above, we can see the core of the vulnerability, infact \textit{title} is taken from the database and granted to be safe.
+\lstinputlisting[firstline=17,lastline=18,caption=ManageTerms.php store of \textit{term}]{/var/www/sm/ManageTerms.php}
+Unfortunately, we have this update operation which can modify \textit{title} and is not validated.
 \end{homeworkProblem}
 \clearpage
 
@@ -483,9 +478,9 @@ The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can fit 
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & false positive \\ \hline
-  				page2 & false positive \\ \hline
-  				fullyear & false positive \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				fullyear & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
@@ -493,7 +488,8 @@ The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can fit 
 \subsection{Explanation}
 The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can also fit for \textit{page} and \textit{page2}.
 \subsubsection{fullyear}
-The parameter is just used to display a different form of insertion of the class, so no xss is possible here.
+\lstinputlisting[firstline=202,lastline=202,caption=AddClass.php load of \textit{fullyear}]{/var/www/sm/AddClass.php}
+This attack is almost the same of the \textit{page} one.
 \end{homeworkProblem}
 \clearpage
 
@@ -513,15 +509,16 @@ The parameter is just used to display a different form of insertion of the class
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				data & positive \\ \hline
+  				data & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
 \subsection{Explanation}
-\lstinputlisting[firstline=205,lastline=207]{/var/www/sm/ReportCards.php}
-\lstinputlisting[firstline=430,lastline=430]{/var/www/sm/ReportCards.php}
-As long as seen at \emph{Vulnerabilities 30,31,207}, \textit{coursename} can be a injected with malicious strings which can lead to an xss vulnerability. In this case the pdf generated can contain such malicious string.
+\lstinputlisting[firstline=205,lastline=207,caption=ReportCards.php fetch of data from the database]{/var/www/sm/ReportCards.php}
+Here the data from the database are fetched and put into a variable (\textit{\$class}), which later is used to print into the pdf document.
+\lstinputlisting[firstline=430,lastline=430,caption=ReportCards.php load of \textit{data}]{/var/www/sm/ReportCards.php}
+\lstinputlisting[firstline=531,lastline=539,caption=ReportCards.php read of \textit{data}]{/var/www/sm/ReportCards.php}
+As long as seen at \emph{Vulnerabilities 30,31,207}, \textit{coursename} can be injected with malicious strings which can lead to an xss vulnerability. In this case the pdf generated can contain such malicious string.
 \end{homeworkProblem}
-\clearpage
 \end{document}
