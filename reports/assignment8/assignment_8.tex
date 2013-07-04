@@ -54,7 +54,7 @@
 %----------------------------------------------------------------------------------------
 
 \definecolor{MyDarkGreen}{rgb}{0.0,0.4,0.0} % This is the color used for comments
-\lstloadlanguages{PHP,Java,Sql} % Load Perl syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
+\lstloadlanguages{PHP,Java,Sql,HTML} % Load Perl syntax for listings, for a list of other languages supported see: ftp://ftp.tex.ac.uk/tex-archive/macros/latex/contrib/listings/listings.pdf
 
 \lstset{ %
   backgroundcolor=\color{SpringGreen},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
@@ -765,7 +765,7 @@ The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{
 \begin{homeworkProblem}{Vulnerability 63}
 \subsection{Brief Analysis}
 \begin{center}
-	File: ViewAssignments.php
+	File: AddTeacher.php
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | }
@@ -789,7 +789,7 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \begin{homeworkProblem}{Vulnerability 70}
 \subsection{Brief Analysis}
 \begin{center}
-	File: ViewAssignments.php
+	File: AddStudent.php
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | }
@@ -813,7 +813,7 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \begin{homeworkProblem}{Vulnerability 71}
 \subsection{Brief Analysis}
 \begin{center}
-	File: ViewAssignments.php
+	File: AddSemester.php
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | }
@@ -1124,7 +1124,11 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \end{lstlisting}
 \subsubsection{page}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page}]
-
+	public void page() {
+		Vulnerabilities.page(tester, "login","Login");
+		tester.assertMatch("Today's Message");
+		tester.assertLinkNotPresentWithText("malicious");
+	}
 \end{lstlisting}
 \subsubsection{message}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{message}]
@@ -1254,7 +1258,6 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \end{center}
 \subsection{JWebUnit test cases}
 The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
-\textbf{CONTROLLARE PAGE2}
 \end{homeworkProblem}
 \clearpage
 
@@ -1279,259 +1282,408 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
    \end{table}
 \end{center}
 \subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 13} at page ~\pageref{sec:V13}.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITIES 11,13,16,18,19,37,41,44,63,70,71,76,85,87,88,89,90,93,111,115,126,
-%					138,141,142,146,147,148,149,161,165,180,181,183,184,191,194,200,201
-%					212,230,238,239,241,257,260,268,272,273,283,288,293,299,309,316,320
-%----------------------------------------------------------------------------------------
-\begin{homeworkProblem}{Vulnerabilities\textsuperscript{(*)}}
-%\problemAnswer{
-%\lipsum[3-5]
-%}
-\subsection{Brief Analysis}
-\begin{center}
-	\begin{table}[h]
-	%caption{Example table}
-		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
-    			\hline
-    			\textbf{VARIABLE} & \textbf{AFFECTED PAGES\textsuperscript{(*)}} & \textbf{RESULT} \\ \hline
-  				page & all & true \\ \hline
-  				page2 & all & positive \\ \hline
-  				selectclass & 11,37,76,87,89,165,180,181,183,194,200,201,309,316 & positive \\ \hline
-  				student & 13,142,194 & positive \\ \hline
-  				semester & 13 & positive \\ \hline
-  				delete & 37,41,44,76,85,111,115,149,161 & positive \\ \hline
-  				assignment & 76 & positive \\ \hline
-  				onpage & 146,183,257,260,268,273,283,288,293,309,320 & positive \\ \hline
-   		 	\end{tabular}
-    	\end{center}
-    \caption*{\begin{tiny}\textsuperscript{(*)}11: AddAssignment.php | 13: AddAttendance.php |16: AddAnnouncements.php | 18: AddUser.php | 19: AddTerm.php | 37: EditAssignment.php | 41: EditAnnouncements.php | 44: EditTerms.php | 63: AddTeacher.php | 70: AddStudent.php | 71: AddSemester.php | 76: EditGrade.php | 85: EditSemester.php | 87/88: ViewClassSettings.php | 90: ViewStudents.php | 93: AddParent.php | 111: EditTeacher.php | 115: EditStudent.php | 126: ViewCourses.php | 138: StudentViewCourses.php | 141: AddClass.php | 142: ParentViewCourses.php | 146/147/148: ViewAnnoucements.php | 149: EditUser.php | 161: EditParent.php | 165: StudentMain.php | 180: TeacherMain.php | 181: ViewStudents.php | 183/184: ViewAssignments.php | 186/241: AdminMain.php | 191: DeficiencyReport.php | 194: ParentMain.php | 200/201: ViewGrades.php | 212: PointsReport.php | 130: VisualizeClasses.php | 238: VisualizeRegistration.php | 239: EditClasses.php | ManageAnnouncements.php | 260: ManageTerms.php | 268. ManageTerms.php | 272: ManageAttendance.php | 273: ManageTeachers.php | ManageUsers.php | 288: ManageParents.php | 293: ManageStudents.php | 299: Registration.php | 309: ManageAssignments.php | 316: ManageGrades.php | 320: ManageClasses.php\end{tiny}}
-   \end{table}
-\end{center}
-\subsection{Explanation}
-These parameters are used to process the web-application flow through. The problem is that the page which receive these values through a POST, do not validate them and they are put inside a the \textit{value} of a \textit{input} element.
-\subsubsection{page}
-\lstinputlisting[firstline=36,lastline=36,caption=AddAssignment.php load of \textit{page}]{/var/www/sm/AddAssignment.php}
-\subsubsection{page2}
-\lstinputlisting[firstline=33,lastline=33,caption=AddAssignment.php load of \textit{page2}]{/var/www/sm/AddAssignment.php}
-\subsubsection{selectclass}
-\lstinputlisting[firstline=35,lastline=35,caption=AddAssignment.php load of \textit{selectclass}]{/var/www/sm/AddAssignment.php}
+\subsubsection{page and page2}
+The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
 \subsubsection{student}
-\lstinputlisting[firstline=33,lastline=33,caption=AddAttendance.php load of \textit{student}]{/var/www/sm/AddAttendance.php}
-\subsubsection{semester}
-\lstinputlisting[firstline=32,lastline=32,caption=AddAttendance.php load of \textit{student}]{/var/www/sm/AddAttendance.php}
-\subsubsection{delete}
-\lstinputlisting[firstline=2,lastline=2,caption=EditAssignment.php load of \textit{delete}]{/var/www/sm/EditAssignment.php}
-\lstinputlisting[firstline=43,lastline=43,caption=EditAssignment.php read of \textit{delete}]{/var/www/sm/EditAssignment.php}
-\subsubsection{assignment}
-\lstinputlisting[firstline=52,lastline=52,caption=EditGrade.php load of \textit{assignment}]{/var/www/sm/EditGrade.php}
-\subsubsection{onpage}
-\lstinputlisting[firstline=69,lastline=69,caption=ViewAnnouncements.php load of \textit{onpage}]{/var/www/sm/ViewAnnouncements.php}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{student}]
+	public void student(){
+        IElement student = tester.getElementByXPath("//form[@name='student']//input[@name='student']");
+        String oldValue = student.getAttribute("value");
+        student.setAttribute("value",oldValue +"';<a href=http://www.unitn.it>malicious</a>");
+		Functions.click(tester,"Classes",0);
+        tester.assertMatch("ParentViewCourses.php: Unable to get the studentid 2");
+        tester.assertLinkNotPresentWithText("malicious");
+	}
+\end{lstlisting}
 \end{homeworkProblem}
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 30,31,207
+%	VULNERABILITY 146
 %----------------------------------------------------------------------------------------
-\begin{homeworkProblem}{Vulnerabilities 30,31,207}
 
+\begin{homeworkProblem}{Vulnerability 146}
+\label{V146}
 \subsection{Brief Analysis}
 \begin{center}
-	Files: ViewAssignments.php,ManageAssignments.php
+	File: ViewAnnouncements.php
 	\begin{table}[h]
-	%caption{Example table}
 		\begin{center}
     		\begin{tabular}{ | c | c | }
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				coursename & false positive \\ \hline
-				assignment[5] & positive \\ \hline  				
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				onpage & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
-\subsection{Explanation}
-\subsubsection{coursename}
-In ManageClasses we have the 3 queries which do \textit{insertion} and one which do an \textit{update} inside the database table:
+\subsection{JWebUnit test cases}
+\subsubsection{page and page2}
+The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
+\subsubsection{onpage}
+\textbf{DA VERIFICARE}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{onpage}]
 
-\lstinputlisting[firstline=23,lastline=24,caption=ManageClasses.php insert1 of \textit{coursename}]{/var/www/sm/ManageClasses.php}
-\lstinputlisting[firstline=39,lastline=40,caption=ManageClasses.php insert2 of \textit{coursename}]{/var/www/sm/ManageClasses.php}
-\lstinputlisting[firstline=46,lastline=47,caption=ManageClasses.php insert3 of \textit{coursename}]{/var/www/sm/ManageClasses.php}
-\lstinputlisting[firstline=73,lastline=74,caption=ManageClasses.php update of \textit{coursename}]{/var/www/sm/ManageClasses.php}
-
-No sanitization is made over the \$\_POST[title], so an xss can be injected.
-
-In \textit{ViewAssignments.php} and \textit{ManageAssignments.php} we have the read of the tainted value: 
-\lstinputlisting[firstline=6,lastline=7,caption=ViewAssignment.php load of \textit{coursename}]{/var/www/sm/ViewAssignments.php}
-\lstinputlisting[firstline=6,lastline=7,caption=ManageAssignments.php load of \textit{coursename}]{/var/www/sm/ManageAssignments.php}
-
-So far it seems legit to say that an XSS attack can be done over this vulnerability, having a look to the forms which are the source of the insertions and updates, we can see that a limit of 20 chars is set for the field:
-\lstinputlisting[firstline=19,lastline=19,caption=AddClass.php form field]{/var/www/sm/AddClass.php}
-\lstinputlisting[firstline=25,lastline=25,caption=EditClass.php form field]{/var/www/sm/EditClass.php}
-Anyway we know that such restriction can be by-passed by intercepting the requests and modify them on-the-fly. However a closer look to the database structure denies our expectation and explains why this result is a false positive:
-\lstinputlisting[firstline=55,lastline=55,caption=Sql structure of the field]{/var/www/sm/SchoolMate.sql}
-In fact, the filed coursename\textit{•} is restricted to 20 chars even in the database structure and so any larger string is going to be truncated to that size. So no XSS can be injected because the shorter one that we know (\emph{\textit{<script>}alert('')</script>}) is \textbf{26} chars long.
-\subsubsection{assignment[5]}
-The source of this vulnerability is the value of the column \textit{assignmentinformation} of the table \textit{assignments}. The page \emph{ManageAssignments.php} can do an insertion inside that table and the value passed is not validated:
-\lstinputlisting[firstline=27,lastline=28,caption=ManageAssignments.php store of \textit{assignment[5]}]{/var/www/sm/ManageAssignments.php}
-Later on, the injected value can be read from the \emph{ViewAssignments.php} page and no validation is done:
-\lstinputlisting[firstline=43,lastline=47,caption=ViewAssignments.php load query for \textit{assignment[5]}]{/var/www/sm/ViewAssignments.php}
-\lstinputlisting[firstline=59,lastline=66,caption=ViewAssignments.php variable read of \textit{assignment[5]}]{/var/www/sm/ViewAssignments.php}
+\end{lstlisting}
 \end{homeworkProblem}
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 92
+%	VULNERABILITY 147
 %----------------------------------------------------------------------------------------
-\begin{homeworkProblem}{Vulnerability 92}
+
+\begin{homeworkProblem}{Vulnerability 147}
 \subsection{Brief Analysis}
 \begin{center}
-	File: ManageSchoolInfo.php
+	File: ViewAnnouncements.php
 	\begin{table}[h]
-	%caption{Example table}
 		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
+    		\begin{tabular}{ | c | c | }
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & false positive \\ \hline
-  				page2 & false positive \\ \hline
-  				numperiods & false positive \\ \hline
-  				numsemesters & false positive \\ \hline
-  				phone & true \\ \hline
-  				address & positive \\ \hline
-  				schoolname & false positive \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				onpage & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
-\subsection{Explanation}
-The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can also fit for \textit{page} and \textit{page2}.
-Moreover, \emph{Vulnerabilities 2,3,4,6,10,53} explains the result over \textit{schoolname}.
-\subsubsection{numperiods,numsemesters}
-\lstinputlisting[firstline=14,lastline=22,caption=ManageSchoolInfo.php load of \textit{numperiods} and \textit{numsemesters}]{/var/www/sm/ManageSchoolInfo.php}
-The load of the two values is not validated and that's why the software highlight the case, moreover we have a not validated update over the table:
-\lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{numperiods}-\textit{numsemesters}-\textit{phone}-\textit{address}]{/var/www/sm/header.php}
-As happened for \emph{coursename} on \textit{Vulnerabilities 30,31,207}, the database schema tell us that no injection is possile, because the interested columns are set as int(3):
-\lstinputlisting[firstline=175,lastline=190,caption=Sql schema for \textit{schoolinfo},language=Sql,label=dbsi]{/var/www/sm/SchoolMate.sql}
-\subsubsection{phone}
-\lstinputlisting[firstline=9,lastline=12,caption=ManageSchoolInfo.php load of \textit{phone}]{/var/www/sm/ManageSchoolInfo.php}
-The load works as for the two field above, and as in that case, the result can be addressed as a \emph{false positive} thanks to the database schema (\textit{Listing \ref{dbsi}}). In this case the column has type \textit{varchar(14)}, which is more sensitive than int, but the size prevent any possible injection, because, as said in \textit{Vulnerabilities 30,31,207}, the smaller xss that we can apply - even if useless - is about 26 chars long.
-\subsubsection{address}
-\lstinputlisting[firstline=4,lastline=7,caption=ManageSchoolInfo.php load of \textit{address}]{/var/www/sm/ManageSchoolInfo.php}
-This time the database schema cannot help us, because the field type is \textit{varchar(50)}, so an injection is possible. However it seems that the only page which reads from that field is the page itself - ManageSchoolInfo.php -, which puts the content as value in a form field. Still I will consider it as a positive result, because if in a future deployment the value will be displayed in an another page, the vulnerability will became exploitable.
-\subsection{Testing Code}
-\subsubsection{address}
-\lstinputlisting[firstline=22,lastline=32,language=Java,caption=jwebunit test code for \textit{address}]{/home/ashen/workspace/TestingFramework/src/tests/xss.java}
+\subsection{JWebUnit test cases}
+Is the same of \textit{Vulnerability 146} at page ~\pageref{V146}, but the exploit of the vulnerability is visibile through a \textit{student} account instead of a \textit{parent} one as in the former vulnerability.
 \end{homeworkProblem}
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 105
+%	VULNERABILITY 148
 %----------------------------------------------------------------------------------------
 
-%% arrivato qui!! sistemare porzione di codice java!
-\begin{homeworkProblem}{Vulnerability 105}
+\begin{homeworkProblem}{Vulnerability 148}
 \subsection{Brief Analysis}
 \begin{center}
-	File: Login.php
+	File: ViewAnnouncements.php
 	\begin{table}[h]
-	%caption{Example table}
 		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
+    		\begin{tabular}{ | c | c | }
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				message & positive \\ \hline
-  				page & positive \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				onpage & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
-\subsection{Explanation}
-The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can fit for \textit{page}.
-\subsubsection{message}
-\lstinputlisting[firstline=8,lastline=10,caption=Login.php load of \textit{sitemessage}]{/var/www/sm/Login.php}
-\lstinputlisting[firstline=11,lastline=11,caption=header.php store of \textit{sitemessage}]{/var/www/sm/header.php}
+\subsection{JWebUnit test cases}
+Is the same of \textit{Vulnerability 146} at page ~\pageref{V146}, but the exploit of the vulnerability is visibile through a \textit{teacher} account instead of a \textit{parent} one as in the former vulnerability.
 \end{homeworkProblem}
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 234
+%	VULNERABILITY 149
 %----------------------------------------------------------------------------------------
-\begin{homeworkProblem}{Vulnerability 234}
+
+\begin{homeworkProblem}{Vulnerability 149}
 \subsection{Brief Analysis}
 \begin{center}
-	File: ManageSemesters.php
+	File: EditUser.php
 	\begin{table}[h]
-	%caption{Example table}
 		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
+    		\begin{tabular}{ | c | c | }
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				term & positive \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				delete & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
-\subsection{Explanation}
-\lstinputlisting[firstline=132,lastline=133]{/var/www/sm/ManageSemesters.php}
-\lstinputlisting[firstline=17,lastline=18]{/var/www/sm/ManageTerms.php}
+\subsection{JWebUnit test cases}
+The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}.
 \end{homeworkProblem}
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 269
+%	VULNERABILITY 161
 %----------------------------------------------------------------------------------------
-\begin{homeworkProblem}{Vulnerability 269}
+
+\begin{homeworkProblem}{Vulnerability 161}
 \subsection{Brief Analysis}
 \begin{center}
-	File: AddClass.php
+	File: EditParent.php
 	\begin{table}[h]
-	%caption{Example table}
 		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
+    		\begin{tabular}{ | c | c | }
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & false positive \\ \hline
-  				page2 & false positive \\ \hline
-  				fullyear & false positive \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				delete & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
-\subsection{Explanation}
-The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can also fit for \textit{page} and \textit{page2}.
-\subsubsection{fullyear}
-The parameter is just used to display a different form of insertion of the class, so no xss is possible here.
+\subsection{JWebUnit test cases}
+The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}.
 \end{homeworkProblem}
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 321
+%	VULNERABILITY 165
 %----------------------------------------------------------------------------------------
-\begin{homeworkProblem}{Vulnerability 321}
+
+\begin{homeworkProblem}{Vulnerability 165}
+\label{V165}
 \subsection{Brief Analysis}
 \begin{center}
-	File: ReportCards.php
+	File: StudentMain.php
 	\begin{table}[h]
-	%caption{Example table}
 		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
+    		\begin{tabular}{ | c | c | }
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				data & positive \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
-\subsection{Explanation}
-\lstinputlisting[firstline=205,lastline=207]{/var/www/sm/ReportCards.php}
-\lstinputlisting[firstline=430,lastline=430]{/var/www/sm/ReportCards.php}
-As long as seen at \emph{Vulnerabilities 30,31,207}, \textit{coursename} can be a injected with malicious strings which can lead to an xss vulnerability. In this case the pdf generated can contain such malicious string.
+\subsection{JWebUnit test cases}
+The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
 \end{homeworkProblem}
 \clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 180
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 180}
+\subsection{Brief Analysis}
+\begin{center}
+	File: TeacherMain.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | }
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+Is the same of \textit{Vulnerability 165} at page ~\pageref{V165}, but the exploit of the vulnerability is visibile through a \textit{teacher} account instead of a \textit{student} one as in the former vulnerability.
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 181
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 181}
+\subsection{Brief Analysis}
+\begin{center}
+	File: ViewStudents.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | }
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 183
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 183}
+\label{V183}
+\subsection{Brief Analysis}
+\begin{center}
+	File: ViewAssignments.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | }
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
+  				onpage & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
+\subsubsection{onpage}
+\textbf{VERIFICARE}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 184
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 184}
+\subsection{Brief Analysis}
+\begin{center}
+	File: ViewAssignments.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | }
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
+  				onpage & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+Is the same of \textit{Vulnerability 183} at page ~\pageref{V183}, but the exploit of the vulnerability is visibile through a \textit{student} account instead of a \textit{parent} one as in the former vulnerability.
+\textbf{VERIFICARE ONPAGE}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 186
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 186}
+\subsection{Brief Analysis}
+\begin{center}
+	File: AdminMain.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | }
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 191
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 191}
+\subsection{Brief Analysis}
+\begin{center}
+	File: DeficiencyReport.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | }
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+The JWebUnit test cases of this vulnerability, were a bit different from the others, the access to the page is done through a \textit{select} with an \textit{onChange trigger}.
+\subsubsection{page}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page}]
+	public void page(){
+		Vulnerabilities.page(tester,"students",null);
+		tester.selectOption("report","Deficiency Report");
+		tester.assertMatch("Deficiency Report");
+		tester.assertLinkNotPresentWithText("malicious");
+	}
+\end{lstlisting}
+\subsubsection{page2}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page},label=lst:V191P2]
+	public void page2(){
+		IElement mySelect = tester.getElementByXPath("//option[text()='Deficiency Report']");
+		String optionValue = mySelect.getAttribute("value");
+		mySelect.setAttribute("value",optionValue + "'><a href='http://www.unitn.it'>malicious</a><br'");
+		tester.selectOption("report","Deficiency Report");
+		tester.assertMatch("Deficiency Report");
+		tester.assertLinkNotPresentWithText("malicious");
+	}
+\end{lstlisting}
+The page2 test case took advantage of this part of the onChange attribute of the select item:
+\begin{lstlisting}[language=PHP,caption=portion of the source code of the displayed page (ViewStudents)]
+ <select name='report' onChange='document.students.page2.value=document.students.report.value;document.students.deletestudent.value=0;document.students.submit();'>
+\end{lstlisting}
+In particular, \textit{document.students.page2.value=document.students.report.value;}, give the possibility to inject the attack in the value of the select option, as can be seen in the Listing~\ref{lst:V191P2} from line 2 to 4.
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 194
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 194}
+\subsection{Brief Analysis}
+\begin{center}
+	File: ParentMain.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | }
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
+  				student & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11} and \textit{Vulnerability 13} at page ~\pageref{sec:V13}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 200
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 200}
+\subsection{Brief Analysis}
+\begin{center}
+	File: ViewGrades.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | }
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				selectclass & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
+\end{homeworkProblem}
+\clearpage
+
 \end{document}
