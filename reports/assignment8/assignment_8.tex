@@ -198,6 +198,7 @@
 \subsection{Brief Analysis}
 \begin{center}
 	File: AddAssignment.php
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: \\16,18,19,63,70,71,87,88,89,90,93,126,138,141,165,180,181,186,194,200,201,230,238
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c |}
@@ -236,7 +237,6 @@ In these two functions there is nothing special, just navigation and call to the
 \end{center}
 \clearpage
 \subsubsection{page}
-%\lstinputlisting[firstline=28,lastline=32,language=Java,caption=jwebunit test code for \textit{page}]{/home/ashen/workspace/TestingFramework/src/tests/V11.java}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page}]
 	public void page(){
 		Vulnerabilities.page(tester,"assignments","Add");
@@ -244,7 +244,6 @@ In these two functions there is nothing special, just navigation and call to the
         tester.assertLinkNotPresentWithText("malicious");
 	}
 \end{lstlisting}
-%\lstinputlisting[firstline=7,lastline=13,language=Java,caption=function for the \textit{page} vulnerability]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
 \begin{lstlisting}[language=Java,caption=function for the \textit{page} vulnerability]
 	public static void page(WebTester tester,String formName,String buttonName){
         IElement page = tester.getElementByXPath("//form[@name='" + formName + "']//input[@name='page']");
@@ -257,7 +256,6 @@ In these two functions there is nothing special, just navigation and call to the
 This code does the test for \textit{page}. In order to catch the correct hidden field it was necessary to filter the form first, because there were two hidden fields with the same name and the first is not the one triggered by the buttons.
 So the function retrieves the page2 input element and stores it into the \emph{oldValue} variable, which at line 6 is concatenated to the malicious link and inserted into the page value.
 \subsubsection{page2}
-%\lstinputlisting[firstline=35,lastline=39,language=Java,caption=jwebunit test code for \textit{page2}]{/home/ashen/workspace/TestingFramework/src/tests/V11.java}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page2}]
 	public void page2(){
 		Vulnerabilities.page2(tester,"assignments","Add");
@@ -265,7 +263,6 @@ So the function retrieves the page2 input element and stores it into the \emph{o
         tester.assertLinkNotPresentWithText("malicious");
 	}
 \end{lstlisting}
-%\lstinputlisting[firstline=15,lastline=23,language=Java,caption=function for the \textit{page2} vulnerability]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
 \begin{lstlisting}[language=Java,caption=function for the \textit{page2} vulnerability]
 	public static void page2(WebTester tester,String formName,String buttonName){
 		IElement page2 = tester.getElementByXPath("//form[@name='" + formName + "']//input[@name='page2']");
@@ -280,8 +277,6 @@ So the function retrieves the page2 input element and stores it into the \emph{o
 \end{lstlisting}
 The page2 vulnerability was more subtle to automatically trigger. That was due to the fact that the form buttons have a \textit{javascript} code in the attribute \textbf{onClick}, which write on the page2 value. So that in order to prevent the button from modify the injected value, at line 3 the button element is retrieved, then we get the value of the onClick attribute, which is processed by the \emph{page2Fix function} -  which purge the attribute from any command that modifies the page2 value and returns the value for page2 and the other instructions that need to be put back into the attribute.
 \subsubsection{selectclass}
-%\lstinputlisting[firstline=42,lastline=46,language=Java,caption=jwebunit test code for \textit{selectclass}]{/home/ashen/workspace/TestingFramework/src/tests/V11.java}
-%\lstinputlisting[firstline=34,lastline=39,language=Java,caption=function for the \textit{selectclass} vulnerability]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{selectclass}]
 	public void selectclass(){
 		Vulnerabilities.selectclass(tester,"assignments","Add");
@@ -310,6 +305,7 @@ The selectclass vulnerability was almost straightforward and differs from the \t
 \subsection{Brief Analysis}
 \begin{center}
 	File: AddAttendance.php
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 194
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | }
@@ -360,8 +356,6 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
         Functions.click(tester,buttonName,1);
 	}
 \end{lstlisting}
-%\lstinputlisting[firstline=40,lastline=44,language=Java,caption=jwebunit test code for \textit{student}]{/home/ashen/workspace/TestingFramework/src/tests/V13.java}
-%\lstinputlisting[firstline=51,lastline=57,language=Java,caption=function for vulnerabilities over select input elements]{/home/ashen/workspace/TestingFramework/src/util/Vulnerabilities.java}
 In this case the input element was a \textbf{select}, so the XPATH expression was modified with \emph{//option[@selected]} to catch the selected option. The remaining part of the code is almost equivalent to the \textit{page} one.
 \subsubsection{semester}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{semester}]
@@ -371,80 +365,7 @@ In this case the input element was a \textbf{select}, so the XPATH expression wa
         tester.assertLinkNotPresentWithText("malicious");
 	}
 \end{lstlisting}
-%\lstinputlisting[firstline=47,lastline=51,language=Java,caption=jwebunit test code for \textit{semester}]{/home/ashen/workspace/TestingFramework/src/tests/V13.java}
 The semester test is a copy-paste of the student one.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 16
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 16}
-\subsection{Brief Analysis}
-\begin{center}
-	File: AddAnnouncements.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 18
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 18}
-\subsection{Brief Analysis}
-\begin{center}
-	File: AddUser.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 19
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 19}
-\subsection{Brief Analysis}
-\begin{center}
-	File: AddTerm.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
 \end{homeworkProblem}
 \clearpage
 
@@ -457,6 +378,7 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \label{sec:V30}
 \begin{center}
 	File: ViewAssignments.php
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 90,126,138,207
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | c |}
@@ -587,7 +509,8 @@ For this vulnerability, I wrote a generic function in the Vulnerability class wh
 \label{sec:V37}
 \subsection{Brief Analysis}
 \begin{center}
-	File: EditAssignment.php
+File: EditAssignment.php
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 41,44,85,111,115,149,161,239
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c |}
@@ -654,56 +577,6 @@ The interesting thing of this case is that even a \emph{sql injection} is possib
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 41
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 41}
-\subsection{Brief Analysis}
-\begin{center}
-	File: EditAnnouncement.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c |}
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				delete & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 44
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 44}
-\subsection{Brief Analysis}
-\begin{center}
-	File: EditTerm.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c |}
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				delete & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
 %	VULNERABILITY 54
 %----------------------------------------------------------------------------------------
 
@@ -755,78 +628,6 @@ The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{
         tester.assertLinkNotPresentWithText("malicious");
 	}
 \end{lstlisting}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 63
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 63}
-\subsection{Brief Analysis}
-\begin{center}
-	File: AddTeacher.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 70
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 70}
-\subsection{Brief Analysis}
-\begin{center}
-	File: AddStudent.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 71
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 71}
-\subsection{Brief Analysis}
-\begin{center}
-	File: AddSemester.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
 \end{homeworkProblem}
 \clearpage
 
@@ -887,104 +688,6 @@ The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{
 \end{lstlisting}
 \lstinputlisting[firstline=4,lastline=4,caption=EditGrade.php read of assignment]{/home/ashen/university/Security/sm/EditGrade.php}
 In this case, the input element is a \textit{select}, but the posted variable is printed inside an sql query - so as already said for \emph{Vulnerability 37} - an Sql Injection is also possible.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 85
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 85}
-\subsection{Brief Analysis}
-\begin{center}
-	File: EditSemester.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				delete & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 87
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 87}
-\subsection{Brief Analysis}
-\begin{center}
-	File: ViewClassSettings.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c |}
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				selectclass & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
-\end{homeworkProblem}
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 88,89
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 88,89}
-\subsection{Brief Analysis}
-\begin{center}
-	V88 File: ViewClassSettings.php
-	V89 File: ClassSettings.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c |}
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				selectclass & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-The vulnerabilities 88 and 89 are almost the same of 87, with the difference that them are visible from student (V88) and teacher (V89) accounts instead of a parent one.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 90
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 90}
-\subsection{Brief Analysis}
-\begin{center}
-	File: ParentViewStudents.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11} for the \textit{page} vulnerability, while using the modified version of \textit{Vulnerability 30} at page ~\pageref{sec:V30} for the \textit{page2} vulnerability.
 \end{homeworkProblem}
 \clearpage
 
@@ -1054,30 +757,6 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 93
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 93}
-\subsection{Brief Analysis}
-\begin{center}
-	File: AddParent.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
 %	VULNERABILITY 105
 %----------------------------------------------------------------------------------------
 
@@ -1138,130 +817,6 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 111
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 111}
-\subsection{Brief Analysis}
-\begin{center}
-	File: EditTeacher.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				delete & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}
-\subsection{Fix}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 115
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 115}
-\subsection{Brief Analysis}
-\begin{center}
-	File: EditStudent.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				delete & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}
-\subsection{Fix}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 126
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 126}
-\subsection{Brief Analysis}
-\begin{center}
-	File: ViewCourses.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11} for the \textit{page} vulnerability, while using the modified version of \textit{Vulnerability 30} at page ~\pageref{sec:V30} for the \textit{page2} vulnerability.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 138
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 138}
-\subsection{Brief Analysis}
-\begin{center}
-	File: StudentViewCourses.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11} for the \textit{page} vulnerability, while using the modified version of \textit{Vulnerability 30} at page ~\pageref{sec:V30} for the \textit{page2} vulnerability.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 141
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 141}
-\subsection{Brief Analysis}
-\begin{center}
-	File: AddClass.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
 %	VULNERABILITY 142
 %----------------------------------------------------------------------------------------
 
@@ -1307,6 +862,7 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \subsection{Brief Analysis}
 \begin{center}
 	File: ViewAnnouncements.php
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 147,148,257
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | }
@@ -1331,182 +887,6 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 147
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 147}
-\subsection{Brief Analysis}
-\begin{center}
-	File: ViewAnnouncements.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				onpage & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-Is the same of \textit{Vulnerability 146} at page ~\pageref{V146}, but the exploit of the vulnerability is visibile through a \textit{student} account instead of a \textit{parent} one as in the former vulnerability.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 148
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 148}
-\subsection{Brief Analysis}
-\begin{center}
-	File: ViewAnnouncements.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				onpage & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-Is the same of \textit{Vulnerability 146} at page ~\pageref{V146}, but the exploit of the vulnerability is visibile through a \textit{teacher} account instead of a \textit{parent} one as in the former vulnerability.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 149
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 149}
-\subsection{Brief Analysis}
-\begin{center}
-	File: EditUser.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				delete & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 161
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 161}
-\subsection{Brief Analysis}
-\begin{center}
-	File: EditParent.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				delete & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 165
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 165}
-\label{V165}
-\subsection{Brief Analysis}
-\begin{center}
-	File: StudentMain.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				selectclass & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 180
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 180}
-\subsection{Brief Analysis}
-\begin{center}
-	File: TeacherMain.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				selectclass & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-Is the same of \textit{Vulnerability 165} at page ~\pageref{V165}, but the exploit of the vulnerability is visibile through a \textit{teacher} account instead of a \textit{student} one as in the former vulnerability.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 181
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 181}
-\subsection{Brief Analysis}
-\begin{center}
-	File: ViewStudents.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				selectclass & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
 %	VULNERABILITY 183
 %----------------------------------------------------------------------------------------
 
@@ -1515,6 +895,7 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \subsection{Brief Analysis}
 \begin{center}
 	File: ViewAssignments.php
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 184
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | }
@@ -1529,60 +910,13 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
    \end{table}
 \end{center}
 \subsection{JWebUnit test cases}
+\subsubsection{page and page2, selectclass}
 The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
 \subsubsection{onpage}
 \textbf{VERIFICARE}
-\end{homeworkProblem}
-\clearpage
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{onpage}]
 
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 184
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 184}
-\subsection{Brief Analysis}
-\begin{center}
-	File: ViewAssignments.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				selectclass & true \\ \hline
-  				onpage & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-Is the same of \textit{Vulnerability 183} at page ~\pageref{V183}, but the exploit of the vulnerability is visibile through a \textit{student} account instead of a \textit{parent} one as in the former vulnerability.
-\textbf{VERIFICARE ONPAGE}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 186
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 186}
-\subsection{Brief Analysis}
-\begin{center}
-	File: AdminMain.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
+\end{lstlisting}
 \end{homeworkProblem}
 \clearpage
 
@@ -1591,9 +925,11 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 %----------------------------------------------------------------------------------------
 
 \begin{homeworkProblem}{Vulnerability 191}
+\label{sec:V191}
 \subsection{Brief Analysis}
 \begin{center}
-	File: DeficiencyReport.php
+File: DeficiencyReport.php
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 212,241
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | }
@@ -1636,53 +972,60 @@ In particular, \textit{document.students.page2.value=document.students.report.va
 \clearpage
 
 %----------------------------------------------------------------------------------------
-%	VULNERABILITY 194
+%	VULNERABILITY 234
 %----------------------------------------------------------------------------------------
 
-\begin{homeworkProblem}{Vulnerability 194}
+\begin{homeworkProblem}{Vulnerability 234}
 \subsection{Brief Analysis}
 \begin{center}
-	File: ParentMain.php
+	File: ManageSemesters.php
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | }
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				selectclass & true \\ \hline
-  				student & true \\ \hline
+  				term & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
 \end{center}
 \subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11} and \textit{Vulnerability 13} at page ~\pageref{sec:V13}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 200
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 200}
-\subsection{Brief Analysis}
-\begin{center}
-	File: ViewGrades.php
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				selectclass & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
+\subsubsection{prepare and cleanup}
+\begin{lstlisting}[language=Java,caption=prepare function]
+	public void prepare(){
+        tester = new WebTester();
+        tester.setBaseUrl("http://localhost/sm/");
+        tester.beginAt("index.php");
+        Functions.login(tester,"admin");
+        Functions.click(tester,"Semesters",0);
+        tester.assertMatch("Manage Semesters");
+		IElement myCheckbox = tester.getElementByXPath("//td[text()='First']/..//input[@type='checkbox']");
+		tester.setWorkingForm("semesters");
+		tester.checkCheckbox("delete[]",myCheckbox.getAttribute("value"));
+		Functions.click(tester,"Edit",1);
+		tester.setTextField("title","<a href>a</a>");
+		Functions.click(tester,"Edit Semester",1);
+	}
+\end{lstlisting}
+\begin{lstlisting}[language=Java,caption=cleanup function]
+	public void cleanup(){
+		IElement myCheckbox = tester.getElementByXPath("//td[text()='First']/..//input[@type='checkbox']");
+		tester.setWorkingForm("semesters");
+		tester.checkCheckbox("delete[]",myCheckbox.getAttribute("value"));
+		Functions.click(tester,"Edit",1);
+		tester.setTextField("title","first");
+		Functions.click(tester,"Edit Semester",1);
+		Functions.click(tester,"Log Out",0);
+		tester = null;
+	}
+\end{lstlisting}
+\subsubsection{term}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page}]
+	public void term(){
+        tester.assertMatch("Manage Semesters");
+        tester.assertLinkNotPresentWithText("a");
+	}
+\end{lstlisting}
 \end{homeworkProblem}
 \clearpage
 
