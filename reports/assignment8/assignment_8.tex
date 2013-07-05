@@ -198,7 +198,7 @@
 \subsection{Brief Analysis}
 \begin{center}
 	File: AddAssignment.php
-\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: \\16,18,19,63,70,71,87,88,89,90,93,126,138,141,165,180,181,186,194,200,201,230,238
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: \\16,18,19,63,70,71,87,88,89,90,93,126,138,141,165,180,181,186,194,200,201,230,238,269,272,316
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c |}
@@ -378,7 +378,7 @@ The semester test is a copy-paste of the student one.
 \label{sec:V30}
 \begin{center}
 	File: ViewAssignments.php
-\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 90,126,138,207
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 90,126,138,183,184,207,299,309
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | c |}
@@ -862,7 +862,7 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \subsection{Brief Analysis}
 \begin{center}
 	File: ViewAnnouncements.php
-\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 147,148,257
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 147,148,183,184,257,260,268,273,283,288,293,309,320
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | }
@@ -879,43 +879,19 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \subsubsection{page and page2}
 The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
 \subsubsection{onpage}
-\textbf{DA VERIFICARE}
-\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{onpage}]
-
+\begin{lstlisting}[language=PHP,caption=portion of code of the generated ViewAnnouncements page]
+<a href='JavaScript: document.announcements.deleteannouncement.value=0;document.announcements.page2.value=4;document.announcements.onpage.value=1;document.announcements.submit();' class='selectedpagenum' onMouseover="window.status='Go to page 1';return true;" onMouseout="window.status='';return true;">1</a>
 \end{lstlisting}
-\end{homeworkProblem}
-\clearpage
-
-%----------------------------------------------------------------------------------------
-%	VULNERABILITY 183
-%----------------------------------------------------------------------------------------
-
-\begin{homeworkProblem}{Vulnerability 183}
-\label{V183}
-\subsection{Brief Analysis}
-\begin{center}
-	File: ViewAssignments.php
-\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 184
-	\begin{table}[h]
-		\begin{center}
-    		\begin{tabular}{ | c | c | }
-    			\hline
-    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
-  				selectclass & true \\ \hline
-  				onpage & true \\ \hline
-    		\end{tabular}
-    	\end{center}
-   \end{table}
-\end{center}
-\subsection{JWebUnit test cases}
-\subsubsection{page and page2, selectclass}
-The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}.
-\subsubsection{onpage}
-\textbf{VERIFICARE}
+In this page there were a coding error, infact the \textit{document.announcements.deleteannouncement.value=0;} command was responsible of the malfunctioning of the above link. That was due to the fact that \textit{deleteannouncement} was not an item of the \textit{announcements} form and so it turns out in an error. I removed from the page that first command and so now the page works properly.
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{onpage}]
-
+	@Test
+	public void onpage(){
+		Functions.click(tester,"Announcements",0);
+		Vulnerabilities.onpage(tester,"1","announcements");
+		Functions.click(tester,"1",0);
+		tester.assertMatch("View Announcements");
+		tester.assertLinkNotPresentWithText("malicious");
+	}
 \end{lstlisting}
 \end{homeworkProblem}
 \clearpage
@@ -1024,6 +1000,45 @@ In particular, \textit{document.students.page2.value=document.students.report.va
 	public void term(){
         tester.assertMatch("Manage Semesters");
         tester.assertLinkNotPresentWithText("a");
+	}
+\end{lstlisting}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	VULNERABILITY 269
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 269}
+\subsection{Brief Analysis}
+\begin{center}
+	File: AddClass.php
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | }
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+  				fullyear & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+The implementation of \textit{prepare},\textit{cleanup}, \textit{page} and \textit{page2} are adapted from the code for \textit{Vulnerability 11} at page~\pageref{sec:V11}.
+\subsubsection{term}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{fullyear}]
+	public void fullyear(){
+		Functions.click(tester,"Add",1);
+		tester.assertMatch("Add Class");
+		IElement fullyearButton = tester.getElementByXPath("//form[@name='addclass']//input[@value='Full Year']");
+		fullyearButton.setAttribute("onClick","document.addclass.submit();");
+        IElement fullyear = tester.getElementByXPath("//form[@name='addclass']//input[@name='fullyear']");
+        fullyear.setAttribute("value","1'><a href=http://www.unitn.it>malicious</a>");
+		Functions.click(tester,"Full Year",1);
+        tester.assertMatch("Add Class");
+        tester.assertLinkNotPresentWithText("malicious");
 	}
 \end{lstlisting}
 \end{homeworkProblem}
