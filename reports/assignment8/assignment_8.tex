@@ -378,14 +378,12 @@ The semester test is a copy-paste of the student one.
 \label{sec:V30}
 \begin{center}
 	File: ViewAssignments.php
-\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 90,126,138,183,184,207,299,309
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 207
 	\begin{table}[h]
 		\begin{center}
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				page & true \\ \hline
-  				page2 & true \\ \hline
 				coursename & true \\ \hline
 				assignment[5] & true \\ \hline
     		\end{tabular}
@@ -425,40 +423,6 @@ The semester test is a copy-paste of the student one.
 	}
 \end{lstlisting}
 \clearpage
-\subsubsection{page}
-\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page}]
-	public void page(){
-		Vulnerabilities.page(tester,"student",null);
-	    Functions.click(tester,"Assignments",0);
-	    tester.assertMatch("View Assignments");
-	    tester.assertMatch("verifica di prova");
-        tester.assertLinkNotPresentWithText("malicious");
-	}
-\end{lstlisting}
-\subsubsection{page2}
-\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page2}]
-	public void page2(){
-		Vulnerabilities.page2Link(tester,"student","Assignments","document.student.submit();");
-	    tester.assertMatch("View Assignments");
-	    tester.assertMatch("verifica di prova");
-        tester.assertLinkNotPresentWithText("malicious");
-	}
-\end{lstlisting}
-\begin{lstlisting}[language=Java,caption=function for the page2 vulnerability with links]
-	public static void page2Link(WebTester tester,String formName,String linkName,String hrefValue){
-		IElement page2 = tester.getElementByXPath("//form[@name='" + formName + "']//input[@name='page2']");
-		IElement link = tester.getElementByXPath("//a[text()='" + linkName + "']");
-		link.setAttribute("href","javascript: " + hrefValue);
-		Integer page2Value = Functions.getPage2(linkName);
-		page2.setAttribute("value",page2Value + "'><a href='http://www.unitn.it'>malicious</a><br'");
-		Functions.click(tester,linkName,0);
-	}
-\end{lstlisting}
-Here a modified version of the page2 utility function is used. That is due to the fact that in this case we have to modify a link instead of a button.
-\begin{center}
-	\textit{\small Continues on the next page ...}
-\end{center}
-\clearpage
 \subsubsection{coursename}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{coursename}]
 	public void coursename() {
@@ -477,7 +441,7 @@ Here a modified version of the page2 utility function is used. That is due to th
 		tester.assertMatch("Edit Class");
 		Vulnerabilities.textFieldVulnerability(tester, "editclass", "title",
 				"Edit Class");
-		tester.assertLinkPresentWithText("a");
+		tester.assertLinkPresentWithText("malicious");
 		Functions.click(tester, "Log Out", 0);
 		// CHECKING THE VULNERABILITY
 		Functions.login(tester, "student");
@@ -493,11 +457,29 @@ This test is a bit more verbose, because in order to test the \textit{coursename
 	public static void textFieldVulnerability(WebTester tester,
 			String formName, String fieldName,String buttonName) {
 		String oldValue = tester.getElementByXPath("//input [@name='" + fieldName + "']").getAttribute("value");
-		tester.setTextField(fieldName,oldValue + "<a href>a</a>");
+		tester.setTextField(fieldName,oldValue + "<a href>malicious</a>");
 		Functions.click(tester,buttonName, 1);
 	}
 \end{lstlisting}
 For this vulnerability, I wrote a generic function in the Vulnerability class which is able to process vulnerabilities over text fields.
+\subsection{Database loads test and fixes}
+Because \textit{coursename} is loaded from the database, even if we apply a fix to the update a pre-existent injection can present on the database and then even if the post variables are sanitez, the upcoming data from the database could be a security issue until they are updated once. So a test which checks this case should be made.
+\clearpage
+\subsubsection{Test Case}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{coursename} over pre-existent db data]
+	public void coursenameSQL(){
+		MySql.executeUpdate("UPDATE courses SET coursename = 'Music<a href>mal</a>' WHERE courseid = '1'");
+		Functions.click(tester, "Assignments", 0);
+		tester.assertMatch("View Assignments");
+		tester.assertLinkNotPresentWithExactText("mal");
+	}
+\end{lstlisting}
+\subsubsection{Fix}
+\begin{lstlisting}[language=PHP,caption=sanitization of \textit{coursename} over a db load injection]
+ // SANITIZING coursename
+ //$coursename = mysql_result($query,0);
+ $coursename = htmlspecialchars(mysql_result($query,0));
+\end{lstlisting}
 \end{homeworkProblem}
 \clearpage
 
@@ -604,6 +586,7 @@ The interesting thing of this case is that even a \emph{sql injection} is possib
     	Functions.login(tester,"admin");
         Functions.click(tester,"School",0);
         tester.assertMatch("Manage School Information");
+        oldValue = tester.getElementByXPath("//textarea [@name='sitetext']").getTextContent();
 	}
 \end{lstlisting}
 \begin{lstlisting}[language=Java,caption=cleanup function]
@@ -621,12 +604,28 @@ The interesting thing of this case is that even a \emph{sql injection} is possib
 \subsubsection{text}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{text}]
 	public void siteText(){
-        oldValue = tester.getElementByXPath("//textarea [@name='sitetext']").getTextContent();
         tester.setTextField("sitetext", "<a href=\"http://www.unitn.it\">malicious</a>");
         Functions.click(tester," Update ",1);
         Functions.click(tester,"Log Out",0);
         tester.assertLinkNotPresentWithText("malicious");
 	}
+\end{lstlisting}
+\clearpage
+\subsection{Database loads test and fixes}
+Because \textit{text} is loaded from the database, even if we apply a fix to the update a pre-existent injection can present on the database and then even if the post variables are sanitez, the upcoming data from the database could be a security issue until they are updated once. So a test which checks this case should be made.
+\subsubsection{Test Case}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{text} over pre-existent db data]
+	public void siteTextSQL(){
+		MySql.executeUpdate("UPDATE schoolinfo SET sitetext = '<a href>malicious</a>'");
+		Functions.click(tester,"Log Out",0);
+		tester.assertLinkNotPresentWithExactText("malicious");
+	}
+\end{lstlisting}
+\subsubsection{Fix}
+\begin{lstlisting}[language=PHP,caption=sanitization of \textit{text} over a db load injection]
+ // SANITIZING sitetext
+ //$text  = mysql_result($query,0);
+ $text  = htmlspecialchars(mysql_result($query,0));
 \end{lstlisting}
 \end{homeworkProblem}
 \clearpage
@@ -692,6 +691,57 @@ In this case, the input element is a \textit{select}, but the posted variable is
 \clearpage
 
 %----------------------------------------------------------------------------------------
+%	VULNERABILITY 87
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}{Vulnerability 87}
+\subsection{Brief Analysis}
+\begin{center}
+	File: ViewClassSettings.php
+\\Similar Vulnerabilities\footnote{their test cases are based on the ones of this vulnerability}: 90,126,138,183,184,299,309
+	\begin{table}[h]
+		\begin{center}
+    		\begin{tabular}{ | c | c | c |}
+    			\hline
+    			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
+  				page & true \\ \hline
+  				page2 & true \\ \hline
+				selectclass & true \\ \hline
+    		\end{tabular}
+    	\end{center}
+   \end{table}
+\end{center}
+\subsection{JWebUnit test cases}
+The code for \textit{page} and \textit{selectclass} is adapted from the one for \textit{Vulnerability 11} at page~\pageref{sec:V11}
+\subsubsection{page2}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page2}]
+	public void page2(){
+		Vulnerabilities.page2Link(tester, "student", "Settings",
+				"document.student.submit();","parent");
+        tester.assertMatch("Class Settings");
+        tester.assertLinkNotPresentWithText("malicious");
+	}
+\end{lstlisting}
+\begin{lstlisting}[language=Java,caption=function for the page2 vulnerability with links]
+	public static void page2Link(WebTester tester,String formName,String linkName,String hrefValue,String user){
+		IElement page2 = tester.getElementByXPath("//form[@name='" + formName + "']//input[@name='page2']");
+		if(linkName!=null){
+			IElement link = tester.getElementByXPath("//a[text()='" + linkName + "']");
+			link.setAttribute("href","javascript: " + hrefValue);
+			Integer page2Value = Functions.getPage2(linkName,user);
+			page2.setAttribute("value",page2Value + "'><a href='http://www.unitn.it'>malicious</a><br'");
+			Functions.click(tester,linkName,0);
+		}else{
+			String page2Value = page2.getAttribute("value");
+			page2.setAttribute("value",page2Value + "'><a href='http://www.unitn.it'>malicious</a><br'");
+		}
+	}
+\end{lstlisting}
+Here a modified version of the page2 utility function is used. That is due to the fact that in this case we have to modify a link instead of a button.
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
 %	VULNERABILITY 92
 %----------------------------------------------------------------------------------------
 
@@ -729,29 +779,50 @@ In this case, the input element is a \textit{select}, but the posted variable is
 \end{lstlisting}
 \begin{lstlisting}[language=Java,caption=cleanup function]
 	public void cleanup(){
-        tester.setTextField("schooladdress", oldValue);
+		IElement schooladdress = tester.getElementByXPath("//input[@value='Fake']");
+		schooladdress.setAttribute("value", oldValue);
         Functions.click(tester," Update ",1);
-        tester.setTextField("schooladdress", oldValue);
+		schooladdress.setAttribute("value", oldValue);
+        Functions.click(tester," Update ",1);
 		Functions.click(tester,"Log Out",0);
 		tester = null;
 	}
 \end{lstlisting}
 \subsubsection{page and page2}
 The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
+\clearpage
 \subsubsection{address}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{address}]
 	public void address(){
         Functions.login(tester,"admin");
         Functions.click(tester,"School",0);
         tester.assertMatch("Manage School Information");
-        tester.setTextField("schooladdress", oldValue + "\'><a href>a</a>");
+        IElement schooladdress = tester.getElementByXPath("//input[@name='schooladdress']");
+        schooladdress.setAttribute("value","Fake\\'><a href>malicious</a><br\\'");
         Functions.click(tester," Update ",1);
-        tester.assertLinkNotPresentWithText("a");
+        tester.assertLinkNotPresentWithExactText("malicious");
 	}
 \end{lstlisting}
 \subsubsection{phone}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{phone}]
 
+\end{lstlisting}
+\subsection{Database loads test and fixes}
+Because \textit{address} is loaded from the database, even if we apply a fix to the update a pre-existent injection can present on the database and then even if the post variables are sanitez, the upcoming data from the database could be a security issue until they are updated once. So a test which checks this case should be made.
+\subsubsection{Test Case}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{address} over pre-existent db data]
+	public void addressSQL(){
+		MySql.executeUpdate("UPDATE schoolinfo SET" +
+					"`address`= '" + oldValue + "\\'><a href>malicious</a><br\\''");
+		Functions.click(tester,"School",0);
+		tester.assertLinkNotPresentWithExactText("malicious");
+	}
+\end{lstlisting}
+\subsubsection{Fix}
+\begin{lstlisting}[language=PHP,caption=sanitization of \textit{address} over a db load injection]
+ // SANITIZING address
+ //$address = mysql_result($query,0);
+ $address = htmlspecialchars(mysql_result($query,0));
 \end{lstlisting}
 \end{homeworkProblem}
 \clearpage
@@ -812,6 +883,24 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
 \subsubsection{message}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{message}]
 		tester.assertLinkNotPresentWithText("malicious");
+\end{lstlisting}
+\subsection{Database loads test and fixes}
+Because \textit{message} is loaded from the database, even if we apply a fix to the update a pre-existent injection can present on the database and then even if the post variables are sanitez, the upcoming data from the database could be a security issue until they are updated once. So a test which checks this case should be made.
+\subsubsection{Test Case}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{message} over pre-existent db data]
+	public void messageSQL(){
+		Functions.login(tester,"student");
+		MySql.executeUpdate("UPDATE schoolinfo SET" +
+					"`sitemessage`= '<a href>malicious</a>'");
+		Functions.click(tester, "Log Out", 0);
+		tester.assertLinkNotPresentWithExactText("malicious");
+	}
+\end{lstlisting}
+\subsubsection{Fix}
+\begin{lstlisting}[language=PHP,caption=sanitization of \textit{message} over a db load injection]
+ // SANITIZING message
+ //$message = mysql_result($query,0);
+ $message = htmlspecialchars(mysql_result($query,0));
 \end{lstlisting}
 \end{homeworkProblem}
 \clearpage
@@ -973,24 +1062,25 @@ In particular, \textit{document.students.page2.value=document.students.report.va
         tester.setBaseUrl("http://localhost/sm/");
         tester.beginAt("index.php");
         Functions.login(tester,"admin");
-        Functions.click(tester,"Semesters",0);
-        tester.assertMatch("Manage Semesters");
-		IElement myCheckbox = tester.getElementByXPath("//td[text()='First']/..//input[@type='checkbox']");
-		tester.setWorkingForm("semesters");
+        Functions.click(tester,"Terms",0);
+        tester.assertMatch("Manage Terms");
+		IElement myCheckbox = tester.getElementByXPath("//td[text()='09/10/2012']/..//input[@type='checkbox']");
+		tester.setWorkingForm("terms");
 		tester.checkCheckbox("delete[]",myCheckbox.getAttribute("value"));
 		Functions.click(tester,"Edit",1);
 		tester.setTextField("title","<a href>a</a>");
-		Functions.click(tester,"Edit Semester",1);
+		Functions.click(tester,"Edit Term",1);
 	}
 \end{lstlisting}
 \begin{lstlisting}[language=Java,caption=cleanup function]
 	public void cleanup(){
-		IElement myCheckbox = tester.getElementByXPath("//td[text()='First']/..//input[@type='checkbox']");
-		tester.setWorkingForm("semesters");
+		Functions.click(tester,"Terms",0);
+		IElement myCheckbox = tester.getElementByXPath("//td[text()='09/10/2012']/..//input[@type='checkbox']");
+		tester.setWorkingForm("terms");
 		tester.checkCheckbox("delete[]",myCheckbox.getAttribute("value"));
 		Functions.click(tester,"Edit",1);
-		tester.setTextField("title","first");
-		Functions.click(tester,"Edit Semester",1);
+		tester.setTextField("title","2012-2013");
+		Functions.click(tester,"Edit Term",1);
 		Functions.click(tester,"Log Out",0);
 		tester = null;
 	}
@@ -998,9 +1088,28 @@ In particular, \textit{document.students.page2.value=document.students.report.va
 \subsubsection{term}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{page}]
 	public void term(){
+		Functions.click(tester,"Semesters",0);
         tester.assertMatch("Manage Semesters");
-        tester.assertLinkNotPresentWithText("a");
+        tester.assertLinkNotPresentWithExactText("a");
 	}
+\end{lstlisting}
+\subsection{Database loads test and fixes}
+Because \textit{term} is loaded from the database, even if we apply a fix to the update a pre-existent injection can present on the database and then even if the post variables are sanitez, the upcoming data from the database could be a security issue until they are updated once. So a test which checks this case should be made.
+\subsubsection{Test Case}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{term} over pre-existent db data]
+	public void termSQL(){
+		MySql.executeUpdate("UPDATE terms SET" +
+					"`title`= '<a href>a</a>'");
+		Functions.click(tester,"Semesters",0);
+        tester.assertMatch("Manage Semesters");
+		tester.assertLinkNotPresentWithExactText("a");
+	}
+\end{lstlisting}
+\subsubsection{Fix}
+\begin{lstlisting}[language=PHP,caption=sanitization of \textit{term} over a db load injection]
+	// SANITIZING term
+	//$term = mysql_result($query2,0);
+	$term = htmlspecialchars(mysql_result($query2,0));
 \end{lstlisting}
 \end{homeworkProblem}
 \clearpage
@@ -1044,4 +1153,45 @@ The implementation of \textit{prepare},\textit{cleanup}, \textit{page} and \text
 \end{homeworkProblem}
 \clearpage
 
+\begin{homeworkProblem}{Fixing the Vulnerabilities}
+\subsection{First Attempt}
+The first idea for the sanitization was to sanitized the POST variables in the page where they are used. For instance the sanitization of page and page2 in this case was as follows.
+\begin{lstlisting}[language=PHP,caption=sanitization of \textit{page}]
+  // SANITIZE page
+  //$page = $_POST["page"];
+  $page = htmlspecialchars($_POST["page"]);
+\end{lstlisting}
+The \textit{page} is accessed directly from the \textit{index.php} page, which is the base for each displayed page. So by sanitizing it at line $\sim$36, the vulnerability is removed.
+\begin{lstlisting}[language=PHP,caption=sanitization of \textit{page2},label=lst:sanitizepg2]
+ //$page2 = $_POST["page2"];
+ // SANITIZING PAGE2
+ $page2 = htmlspecialchars($_POST["page2"]);
+\end{lstlisting}
+The sanitization of page2 has to be done in the main page of each \textit{user type}. In the example of Listing~\ref{lst:sanitizepg2} can be seen the sanitization of \textit{TeacherMain.php}, where the sanitization is done at line $\sim$8
+\begin{lstlisting}[language=PHP,caption=sanitization of \textit{selectclass}]
+   // SANITIZING selectclass
+   $_POST['selectclass'] = htmlspecialchars($_POST['selectclass']);
+\end{lstlisting}
+As for \textit{page2}, this procedure should be repeated for each user type, but this time because the page uses directly (and several times), the \textit{\$\_POST} variable, then I added the line above at line $\sim$69, so that the post variable is now safe.
+\bigskip \\However, after fixing some of them, I though about a more efficient (and less time consuming) solution.
+\subsection{Sanitizing the POST variables}
+I thought that a better solution was to sanitize all the POST parameters by putting a \textit{foreach} cycle at the beginning of \textit{index.php}.
+\begin{lstlisting}[language=PHP,caption=POST variables sanitization cycle]
+  foreach ($_POST as $key => $value){
+  	echo $key;
+	if($key != "delete")
+		$_POST[$key] =  htmlspecialchars($value);
+	else{
+		foreach ($value as $newkey => $newvalue){
+			$value[$newkey] = htmlspecialchars($newvalue);
+		}
+		$_POST[$key] = $value;
+	}
+  }
+\end{lstlisting}
+The if-else guard was needed because the \textit{delete} variable is an  array and so its cells should be sanitized.
+By doing this sanitization, all the test cases were running successfully.
+\subsection{Pre-fix database entries}
+Even if the fix should prevent any successful injection, the database might contain something that was injected before the fix took place. So whenever the vulnerabilities comes from a database enty, it would be better to sanitize it. Because there are some vulnerabilities that may suffer of this, the code and explanation was made in the \textit{Database loads test and fixes} of each vulnerability subjected to this problem.
+\end{homeworkProblem}
 \end{document}

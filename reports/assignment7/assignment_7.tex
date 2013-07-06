@@ -466,9 +466,8 @@ The analysis of the section \emph{Vulnerabilities\textsuperscript{(*)}} can fit 
 \begin{center}
 	File: ManageSemesters.php
 	\begin{table}[h]
-	%caption{Example table}
 		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
+    		\begin{tabular}{ | c | c | }
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
   				term & true \\ \hline
@@ -492,9 +491,8 @@ Unfortunately, we have this update operation which can modify \textit{title} and
 \begin{center}
 	File: AddClass.php
 	\begin{table}[h]
-	%caption{Example table}
 		\begin{center}
-    		\begin{tabular}{ | c | c | c |}
+    		\begin{tabular}{ | c | c | }
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
   				page & true \\ \hline
@@ -531,7 +529,7 @@ This attack is almost the same of the \textit{page} one.
    \end{table}
 \end{center}
 \subsection{Explanation}
-\lstinputlisting[firstline=205,lastline=207,caption=ReportCards.php fetch of data from the database]{/home/ashen/university/Security/sm/ReportCards.php}
+\lstinputlisting[firstline=205,lastline=206,caption=ReportCards.php fetch of data from the database]{/home/ashen/university/Security/sm/ReportCards.php}
 Here the data from the database are fetched and put into a variable (\textit{\$class}), which later is used to print into the pdf document.
 \lstinputlisting[firstline=430,lastline=430,caption=ReportCards.php load of \textit{data}]{/home/ashen/university/Security/sm/ReportCards.php}
 \lstinputlisting[firstline=531,lastline=539,caption=ReportCards.php read of \textit{data}]{/home/ashen/university/Security/sm/ReportCards.php}
