@@ -462,10 +462,19 @@ This test is a bit more verbose, because in order to test the \textit{coursename
 	}
 \end{lstlisting}
 For this vulnerability, I wrote a generic function in the Vulnerability class which is able to process vulnerabilities over text fields.
-\subsection{Database loads test and fixes}
-Because \textit{coursename} is loaded from the database, even if we apply a fix to the update a pre-existent injection can present on the database and then even if the post variables are sanitez, the upcoming data from the database could be a security issue until they are updated once. So a test which checks this case should be made.
+\subsubsection{assignment[5]}
+\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{asignment[5]}]
+	public void assignmentInformation(){
+		MySql.executeUpdate("UPDATE assignments SET assignmentinformation = '<a href>malicious</a>' WHERE assignmentid = '3'");
+		Functions.click(tester, "Assignments", 0);
+		tester.assertMatch("View Assignments");
+		tester.assertLinkNotPresentWithExactText("malicious");
+	}
+\end{lstlisting}
 \clearpage
-\subsubsection{Test Case}
+\subsection{Database loads test and fixes}
+Because \textit{coursename} and \textit{assignment[5]} are loaded from the database, even if we apply a fix to the update, a pre-existent injection can present on the database and then, even if the post variables are sanitez, the upcoming data from the database could be a security issue until they are updated once. So a test which checks this case should be made.
+\subsubsection{Test Cases}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{coursename} over pre-existent db data]
 	public void coursenameSQL(){
 		MySql.executeUpdate("UPDATE courses SET coursename = 'Music<a href>mal</a>' WHERE courseid = '1'");
@@ -479,6 +488,10 @@ Because \textit{coursename} is loaded from the database, even if we apply a fix 
  // SANITIZING coursename
  //$coursename = mysql_result($query,0);
  $coursename = htmlspecialchars(mysql_result($query,0));
+\end{lstlisting}
+\begin{lstlisting}[language=PHP,caption=sanitization of \textit{assignment[5]} over a db load injection]
+ // SANITIZING assignmentinformation
+ $assignment[5] = htmlspecialchars($assignment[5]);
 \end{lstlisting}
 \end{homeworkProblem}
 \clearpage
@@ -677,6 +690,7 @@ Because \textit{text} is loaded from the database, even if we apply a fix to the
 \end{lstlisting}
 \subsubsection{page,page2,selectclass and delete}
 The code is adapted from the one of \textit{Vulnerability 37} at page ~\pageref{sec:V37}
+\clearpage
 \subsubsection{assignment}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{assignment}]
 	public void assignment(){
@@ -1176,7 +1190,7 @@ As for \textit{page2}, this procedure should be repeated for each user type, but
 \bigskip \\However, after fixing some of them, I though about a more efficient (and less time consuming) solution.
 \subsection{Sanitizing the POST variables}
 I thought that a better solution was to sanitize all the POST parameters by putting a \textit{foreach} cycle at the beginning of \textit{index.php}.
-\begin{lstlisting}[language=PHP,caption=POST variables sanitization cycle]
+\begin{lstlisting}[language=PHP,caption=POST variables sanitization cycle,label=lst:sanblock]
   foreach ($_POST as $key => $value){
   	echo $key;
 	if($key != "delete")
@@ -1193,5 +1207,14 @@ The if-else guard was needed because the \textit{delete} variable is an  array a
 By doing this sanitization, all the test cases were running successfully.
 \subsection{Pre-fix database entries}
 Even if the fix should prevent any successful injection, the database might contain something that was injected before the fix took place. So whenever the vulnerabilities comes from a database enty, it would be better to sanitize it. Because there are some vulnerabilities that may suffer of this, the code and explanation was made in the \textit{Database loads test and fixes} of each vulnerability subjected to this problem.
+\\ The modified files for this fixes are: \textit{index.php}, \textit{ViewAssignments.php}, \textit{ManageAssignments.php}, \textit{Login.php}, \textit{ManageSchoolInfo.php} and \textit{ManageSemesters.php}.
+\section{Taint Analysis rerun}
+Pixy was not able to find any new (true) xss vulnerability, the old false positives were reported along with some new false positives which were of the form of the graph below:
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[scale=.3]{320}
+	\end{center}
+\end{figure}
+\\All the POST variables now are inserted into \$value when the \textit{sanitization block} of Listing~\ref{lst:sanblock} is performed. But the \$value variable is just used to sanitize the post and is not used elsewhere, so all of these new cases are false positives.
 \end{homeworkProblem}
 \end{document}
