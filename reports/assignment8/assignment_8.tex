@@ -190,6 +190,24 @@
 \newpage
 
 %----------------------------------------------------------------------------------------
+%	CONTENT OF THE PACKAGE
+%----------------------------------------------------------------------------------------
+\begin{homeworkProblem}{Introduction}
+This report shows the test cases developed through \textit{JWebUnit} for testing the \textit{true} vulnerabilities described in the \textit{Assignment 7}. Finally, the last section is dedicated to the fix of such vulnerabilities.
+\bigskip
+\subsection{Package}
+The package contains:
+\begin{itemize}
+	\item the report
+	\item \textit{fixed} folder, containing the modified files to 
+	\item \textit{notfixed} folder, containing the original versions of the files
+	\item \textit{dumps} folder, containing the dumps from the database
+	\item \textit{src} folder, source code for the JWebUnit test cases
+\end{itemize}
+\end{homeworkProblem}
+\clearpage
+
+%----------------------------------------------------------------------------------------
 %	VULNERABILITY 11
 %----------------------------------------------------------------------------------------
 
@@ -339,6 +357,7 @@ The selectclass vulnerability was almost straightforward and differs from the \t
 \end{lstlisting}
 \subsubsection{page and page2}
 The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{sec:V11}
+\clearpage
 \subsubsection{student}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{student}]
 	public void student(){
@@ -462,6 +481,7 @@ This test is a bit more verbose, because in order to test the \textit{coursename
 	}
 \end{lstlisting}
 For this vulnerability, I wrote a generic function in the Vulnerability class which is able to process vulnerabilities over text fields.
+\clearpage
 \subsubsection{assignment[5]}
 \begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{asignment[5]}]
 	public void assignmentInformation(){
@@ -471,7 +491,6 @@ For this vulnerability, I wrote a generic function in the Vulnerability class wh
 		tester.assertLinkNotPresentWithExactText("malicious");
 	}
 \end{lstlisting}
-\clearpage
 \subsection{Database loads test and fixes}
 Because \textit{coursename} and \textit{assignment[5]} are loaded from the database, even if we apply a fix to the update, a pre-existent injection can present on the database and then, even if the post variables are sanitez, the upcoming data from the database could be a security issue until they are updated once. So a test which checks this case should be made.
 \subsubsection{Test Cases}
@@ -771,7 +790,6 @@ Here a modified version of the page2 utility function is used. That is due to th
   				page & true \\ \hline
   				page2 & true \\ \hline
   				address & true \\ \hline
-  				phone & true \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
@@ -816,10 +834,6 @@ The code is adapted from the one of \textit{Vulnerability 11} at page ~\pageref{
         Functions.click(tester," Update ",1);
         tester.assertLinkNotPresentWithExactText("malicious");
 	}
-\end{lstlisting}
-\subsubsection{phone}
-\begin{lstlisting}[language=Java,caption=jwebunit test code for \textit{phone}]
-
 \end{lstlisting}
 \subsection{Database loads test and fixes}
 Because \textit{address} is loaded from the database, even if we apply a fix to the update a pre-existent injection can present on the database and then even if the post variables are sanitez, the upcoming data from the database could be a security issue until they are updated once. So a test which checks this case should be made.

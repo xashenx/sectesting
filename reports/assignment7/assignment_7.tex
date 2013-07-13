@@ -186,6 +186,9 @@
 \setcounter{tocdepth}{1} % Uncomment this line if you don't want subsections listed in the ToC
 
 \newpage
+\begin{abstract}
+This report analises the xss vulnerabilities detected by \textit{pixy}\footnote{http://pixybox.seclab.tuwien.ac.at/pixy/} on the \textit{Schoolmate}\footnote{http://sourceforge.net/projects/schoolmate/} web application. This is done by looking at the source code and, sometimes, at the database schema. 
+\end{abstract}
 \tableofcontents
 \newpage
 
@@ -404,7 +407,7 @@ The problem is represented by the fact that even the update of such entry is not
   				page2 & true \\ \hline
   				numperiods & false positive \\ \hline
   				numsemesters & false positive \\ \hline
-  				phone & true \\ \hline
+  				phone & false positive \\ \hline
   				address & true \\ \hline
   				schoolname & false positive \\ \hline
     		\end{tabular}
@@ -423,7 +426,7 @@ The database schema tell us that no injection is possile, because the interested
 \lstinputlisting[firstline=175,lastline=190,caption=Sql schema for \textit{schoolinfo},language=Sql,label=dbsi]{/home/ashen/university/Security/sm/SchoolMate.sql}
 \subsubsection{phone}
 \lstinputlisting[firstline=9,lastline=12,caption=ManageSchoolInfo.php load of \textit{phone}]{/home/ashen/university/Security/sm/ManageSchoolInfo.php}
-The load works as for the two field above, but this time the result can be addressed as a \emph{true} thanks to the database schema (\textit{Listing \ref{dbsi}}). In this case the column has type \textit{varchar(14)}, which is more sensitive than int, and as said in \textit{Vulnerabilities 30,31,207}, the smaller xss that we can apply - even if useless - is about 12 chars long.
+The load works as for the two field above, and the result can be addressed as a \emph{false positive} thanks to the database schema (\textit{Listing \ref{dbsi}}). In this case the column has type \textit{varchar(14)}, which is more sensitive than int, but the print of the tainted variable is only performed in the ManageSchoolInfo page, inside the inside the textarea. So to get out of the text area and print a malicious link we should inject a string like this \textit{'\textgreater \textless a href\textgreater a\textless /a\textgreater} which has a length of 15 chars and so it cannot be injected in the database.
 \subsubsection{address}
 \lstinputlisting[firstline=4,lastline=7,caption=ManageSchoolInfo.php load of \textit{address}]{/home/ashen/university/Security/sm/ManageSchoolInfo.php}
 This time the database schema cannot help us, because the field type is \textit{varchar(50)}, so an injection is possible. However it seems that the only page which reads from that field is the page itself - ManageSchoolInfo.php -, which puts the content as value in a form field. Still, I will consider it as a positive result, because if in a future deployment the value will be displayed in an another page, the vulnerability will became exploitable.
@@ -523,7 +526,7 @@ This attack is almost the same of the \textit{page} one.
     		\begin{tabular}{ | c | c | c |}
     			\hline
     			\textbf{VARIABLE} & \textbf{RESULT} \\ \hline
-  				data & true \\ \hline
+  				data & false positive \\ \hline
     		\end{tabular}
     	\end{center}
    \end{table}
@@ -533,6 +536,7 @@ This attack is almost the same of the \textit{page} one.
 Here the data from the database are fetched and put into a variable (\textit{\$class}), which later is used to print into the pdf document.
 \lstinputlisting[firstline=430,lastline=430,caption=ReportCards.php load of \textit{data}]{/home/ashen/university/Security/sm/ReportCards.php}
 \lstinputlisting[firstline=531,lastline=539,caption=ReportCards.php read of \textit{data}]{/home/ashen/university/Security/sm/ReportCards.php}
-As long as seen at \emph{Vulnerabilities 30,31,207}, \textit{coursename} can be injected with malicious strings which can lead to an xss vulnerability. In this case the pdf generated can contain such malicious string.
+As long as seen at \emph{Vulnerabilities 30,31,207}, \textit{coursename} can be injected with malicious strings which can lead to an xss vulnerability. In this case the pdf generated can contain such malicious string. Anyway the page is not working properly and the pdf is not generated, so this vulnerability is marked as \textit{false positive}.
+\\However, if we want to sanitize this vulnerability, the loads from the database should be checked and cleansed by any potential threat.
 \end{homeworkProblem}
 \end{document}

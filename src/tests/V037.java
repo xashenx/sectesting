@@ -23,7 +23,7 @@ public class V037 {
 		tester.assertMatch("Class Settings");
 		Functions.click(tester,"Assignments",0);
 		tester.assertMatch("Manage Assignments");
-		tester.assertMatch("verifica di prova");
+		tester.assertMatch("Verifica");
 		IElement myCheckbox = tester.getElementByXPath("//td[text()='prova2']/..//input[@type='checkbox']");
 		tester.setWorkingForm("assignments");
 		tester.checkCheckbox("delete[]",myCheckbox.getAttribute("value"));
